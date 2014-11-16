@@ -54,24 +54,22 @@ namespace Checkers
 
         public GameSettings Settings { get { return settings; } }
 
-        public GameState(GameSettings settings)
+        public GameState(GameSettings settings, Board board)
         {
             this.settings = settings;
-
-            if (this.settings.BoardSize == 8) this.board = Board.Board8x8;
-            else if (this.settings.BoardSize == 10) this.board = Board.Board10x10;
-            else if (this.settings.BoardSize == 12) this.board = Board.Board12x12;
-            else throw new ArgumentOutOfRangeException("settings.BoardSize", "Valid board sizes: 8, 10 or 12");
-
+            this.board = board;
             this.layout = BoardState.GetInitialLayout(this.board);
 
-            //Test
-            this.layout = this.Layout.Add(this.board.Squares.Skip(12).First(), Checker.BlackFolk);
-            this.layout = this.Layout.Remove(this.board.Squares.Skip(25).First());
-            this.layout = this.Layout.Remove(this.board.Squares.Skip(27).First());
-            this.layout = this.Layout.Remove(this.board.Squares.Skip(22).First());
-            this.layout = this.Layout.Add(this.board.Squares.Skip(13).First(), Checker.BlackFolk);
             this.activePlayer = ColorEnum.White;
+        }
+
+        ///Constructor for tests, allow state from any layout of pieces on a board
+        internal GameState(GameSettings settings, Board board, Layout layout, ColorEnum activePlayer)
+        {
+            this.settings = settings;
+            this.board = board;
+            this.layout = layout;
+            this.activePlayer = activePlayer;
         }
 
         private GameState(GameState gameState, IMove move)

@@ -27,7 +27,7 @@ namespace ConsoleUI
             {
                 var settings = new GameSettings();
                 ConsolePresenter presenter = new ConsolePresenter();
-                GameState game = new GameState(settings);
+                GameState game = new GameState(settings, Board.Board8x8);
 
                 while (game.AvailableMoves.Count() > 0)
                 {
