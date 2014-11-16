@@ -18,7 +18,9 @@ namespace Checkers.Rules
 
         override public IEnumerable<IMove> Execute(GameState game, Square square)
         {
-            return GenerateCaptures(game, SequenceOfCaptures.GetEmptySequence(game.Layout, square));
+            var captures = GenerateCaptures(game, SequenceOfCaptures.BeginSequence(game.Layout, square));
+        
+            return captures;
         }
 
         private IEnumerable<SequenceOfCaptures> GenerateCaptures(GameState game, SequenceOfCaptures sequence)
@@ -31,7 +33,7 @@ namespace Checkers.Rules
                 var forward = diagonal.SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                 if (IsLegalCapture(sequence.LayoutAfter, forward))
-                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward)))
+                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward.Third(), forward.Second())))
                         yield return c;
 
                 if (game.Settings.CaptureBackwards)
@@ -39,7 +41,7 @@ namespace Checkers.Rules
                     var backward = diagonal.Reverse().SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                     if (IsLegalCapture(sequence.LayoutAfter, backward))
-                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward)))
+                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward.Third(), backward.Second())))
                             yield return c;
                 }
             }

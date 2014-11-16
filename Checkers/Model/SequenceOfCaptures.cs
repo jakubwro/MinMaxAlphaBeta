@@ -21,21 +21,14 @@ namespace Checkers
         public IEnumerable<Square> Captured { get {return LayoutBefore.Keys.Except(LayoutAfter.Keys).Where(s => s != FromSquare); } }
         public string CapturedString { get { return string.Join(",", Captured.Select(s => s.ToString())); } }
 
-        public static SequenceOfCaptures GetEmptySequence(Layout currentState, Square fromSquare)
+        public static SequenceOfCaptures BeginSequence(Layout currentState, Square fromSquare)
         {
             return new EmptySequenceOfCaptures(currentState, fromSquare);
         }
 
-        public SequenceOfCaptures ContinueSequence(IEnumerable<Square> squares)
+        public SequenceOfCaptures ContinueSequence(Square to, Square captured)
         {
-            Debug.Assert(squares.Count() == 3);
-            var layout = this.LayoutAfter;
-            var from = squares.First();
-            var captured = squares.Second();
-            var to = squares.Third();
-            var layoutAfter = layout.Add(to, layout[from]).Remove(from).Remove(captured);
-            
-            return new CombinedSequenceOfCaptures(layoutAfter, this);
+            return new CombinedSequenceOfCaptures(to, captured, this);
         }
 
         private class EmptySequenceOfCaptures : SequenceOfCaptures
@@ -57,20 +50,31 @@ namespace Checkers
 
         private class CombinedSequenceOfCaptures : SequenceOfCaptures
         {
-            private readonly Layout stateAfter;
+            private readonly Square toSquare;
+            private readonly Square captured;
             private readonly SequenceOfCaptures restOfSequence;
 
-            public CombinedSequenceOfCaptures(Layout stateAfter, SequenceOfCaptures restOfSequence)
+            public CombinedSequenceOfCaptures(Square toSquare, Square captured, SequenceOfCaptures restOfSequence)
             {
-                this.stateAfter = stateAfter;
+                this.toSquare = toSquare;
+                this.captured = captured;
                 this.restOfSequence = restOfSequence;
             }
 
             override public Layout LayoutBefore { get { return restOfSequence.LayoutBefore; } }
-            override public Layout LayoutAfter { get { return this.stateAfter; } }
             override public int Length { get { return restOfSequence.Length + 1; } }
-            override public Square ToSquare { get { return LayoutAfter.Keys.Except(LayoutBefore.Keys).SingleOrDefault() ?? FromSquare; } }
+            override public Square ToSquare { get { return this.toSquare; } }
             override public Square FromSquare { get { return restOfSequence.FromSquare; } }
+
+            override public Layout LayoutAfter
+            {
+                get
+                {
+                    var layout = restOfSequence.LayoutAfter;
+                    Square from = restOfSequence.ToSquare;
+                    return layout.Add(toSquare, layout[from]).Remove(from).Remove(captured);
+                }
+            }
         }
 
         //TODO: make better move comparer
