@@ -18,7 +18,7 @@ namespace CheckersTests
         {
             GameSettings settings = new GameSettings();
             Board board = Board.Board8x8;
-            Layout layout = BoardState.GetInitialLayout(board);
+            Layout layout = board.InitialLayout;
             var game = new GameState(settings, board, layout, ColorEnum.White);
 
             Assert.IsTrue(game.AvailableMoves.Count() == 7);
@@ -30,7 +30,7 @@ namespace CheckersTests
         {
             GameSettings settings = new GameSettings();
             Board board = Board.Board8x8;
-            Layout layout = BoardState.GetInitialLayout(board);
+            Layout layout = board.InitialLayout;
             layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
             layout = layout.Remove(board.Squares.Skip(25).First());
             layout = layout.Remove(board.Squares.Skip(27).First());
@@ -51,7 +51,7 @@ namespace CheckersTests
         {
             GameSettings settings = new GameSettings();
             Board board = Board.Board8x8;
-            Layout layout = BoardState.GetInitialLayout(board);
+            Layout layout = board.InitialLayout;
             layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
             layout = layout.Remove(board.Squares.Skip(25).First());
             layout = layout.Remove(board.Squares.Skip(27).First());

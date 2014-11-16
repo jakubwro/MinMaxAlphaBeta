@@ -46,7 +46,7 @@ namespace Checkers.Rules
         }
 
         private IEnumerable<SequenceOfCaptures> CaptureRec(GameState game, SequenceOfCaptures sequence)
-        {
+        {               
             foreach (SequenceOfCaptures c in GenerateCaptures(game, sequence))
                 yield return c;
 

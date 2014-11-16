@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Checkers
+namespace Checkers.FastModel
 {
     [StructLayout(LayoutKind.Explicit, Size = 8)]
     public struct State : IState<State>

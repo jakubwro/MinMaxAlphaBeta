@@ -28,8 +28,7 @@ namespace Checkers.Rules
 
         internal Move GetMove(Layout layout, Square first, Square second)
         {
-            var layoutAfter = layout.Add(second, layout[first]).Remove(first);
-            return new Move(layout, layoutAfter);
+            return new Move(layout, first, second);
         }
 
     }

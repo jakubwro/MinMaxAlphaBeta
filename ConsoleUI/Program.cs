@@ -42,7 +42,7 @@ namespace ConsoleUI
             
             //MinMaxAlphaBeta<State, int> minMaxAlphaBeta = new MinMaxAlphaBeta<State, int>(new Gauge());
                
-            IPlayer<State> player1 = new RandomPlayer<State>();
+            //IPlayer<State> player1 = new RandomPlayer<State>();
             //IPlayer<State> player2 = new MinMaxPlayer<State>(minMaxAlphaBeta);
 
             //Game<State> game = new Game<State>(player1, player2);

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Checkers
 {
-    using Layout = System.Collections.Immutable.IImmutableDictionary<Square, Checker>; //TODO: Change to Setup
+    using Layout = System.Collections.Immutable.IImmutableDictionary<Square, Checker>;
 
+    //TODO: make it in a different way
     public interface IMove
     {
         Layout LayoutBefore { get; }

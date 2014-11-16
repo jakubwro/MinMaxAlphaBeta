@@ -58,12 +58,12 @@ namespace Checkers
         {
             this.settings = settings;
             this.board = board;
-            this.layout = BoardState.GetInitialLayout(this.board);
+            this.layout = board.InitialLayout;
 
             this.activePlayer = ColorEnum.White;
         }
 
-        ///Constructor for tests, allow state from any layout of pieces on a board
+        ///Constructor for tests
         internal GameState(GameSettings settings, Board board, Layout layout, ColorEnum activePlayer)
         {
             this.settings = settings;

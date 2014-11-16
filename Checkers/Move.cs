@@ -12,19 +12,21 @@ using Layout = IImmutableDictionary<Square, Checker>;
     public class Move : IMove, IEquatable<Move>
     {
         private readonly Layout layoutBefore;
-        private readonly Layout layoutAfter;
+        private readonly Square fromSquare;
+        private readonly Square toSquare;
 
         public Layout LayoutBefore { get { return layoutBefore; } }
-        public Layout LayoutAfter { get { return layoutAfter; } }
+        public Square FromSquare { get { return fromSquare; } }
+        public Square ToSquare { get { return toSquare; } }
+        
+        public Layout LayoutAfter { get { return layoutBefore.Add(toSquare, layoutBefore[fromSquare]).Remove(fromSquare); } }
 
-        public Move(Layout layoutBefore, Layout layoutAfter)
+        public Move(Layout layoutBefore, Square fromSquare, Square toSquare)
         {
             this.layoutBefore = layoutBefore;
-            this.layoutAfter = layoutAfter;
+            this.fromSquare = fromSquare;
+            this.toSquare = toSquare;
         }
-
-        public Square FromSquare { get { return LayoutBefore.Keys.Except(LayoutAfter.Keys).Single(); } }
-        public Square ToSquare { get { return LayoutAfter.Keys.Except(LayoutBefore.Keys).Single(); } }
 
         public override string ToString()
         {
@@ -33,7 +35,7 @@ using Layout = IImmutableDictionary<Square, Checker>;
 
         public bool Equals(Move other)
         {
-            return this.FromSquare == other.FromSquare && this.ToSquare == this.ToSquare;
+            return this.fromSquare == other.fromSquare && this.toSquare == other.toSquare;
         }
 
         public override bool Equals(object obj)
@@ -46,7 +48,7 @@ using Layout = IImmutableDictionary<Square, Checker>;
 
         public override int GetHashCode()
         {
-            return this.FromSquare.GetHashCode() ^ this.ToSquare.GetHashCode();
+            return this.fromSquare.GetHashCode() ^ this.toSquare.GetHashCode();
         }
     }
 }

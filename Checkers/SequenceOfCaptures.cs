@@ -48,7 +48,7 @@ namespace Checkers
             override public Square ToSquare { get { return fromSquare; } }
         }
 
-        private class CombinedSequenceOfCaptures : SequenceOfCaptures
+        private class CombinedSequenceOfCaptures : SequenceOfCaptures, IEquatable<CombinedSequenceOfCaptures>
         {
             private readonly Square toSquare;
             private readonly Square captured;
@@ -75,12 +75,28 @@ namespace Checkers
                     return layout.Add(toSquare, layout[from]).Remove(from).Remove(captured);
                 }
             }
+
+            public bool Equals(CombinedSequenceOfCaptures other)
+            {
+                if (other == null)
+                    return false;
+
+                if (this.Length != other.Length || this.toSquare != other.toSquare || this.captured != other.captured)
+                    return false;
+
+                return this.restOfSequence.Equals(other.restOfSequence);
+            }
         }
 
-        //TODO: make better move comparer
         public bool Equals(SequenceOfCaptures other)
         {
-            return this.FromSquare == other.FromSquare && this.ToSquare == this.ToSquare;
+            if (this.Length != other.Length)
+                return false;
+
+            if (this.Length == 0)   //Empty sequences
+                return this.FromSquare == other.FromSquare;
+  
+            return ((CombinedSequenceOfCaptures)this).Equals((CombinedSequenceOfCaptures)other);
         }
 
         public override bool Equals(object obj)
@@ -93,7 +109,7 @@ namespace Checkers
 
         public override int GetHashCode()
         {
-            return this.FromSquare.GetHashCode() ^ this.ToSquare.GetHashCode();
+            return base.GetHashCode(); //TODO: fix this
         }
 
     }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MinMaxAlphaBeta;
 
-namespace Checkers
+namespace Checkers.FastModel
 {
     public class Gauge : IGauge<State, int>
     {
