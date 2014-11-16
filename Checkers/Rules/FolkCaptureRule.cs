@@ -31,7 +31,7 @@ namespace Checkers.Rules
                 var forward = diagonal.SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                 if (IsLegalCapture(sequence.LayoutAfter, forward))
-                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward.First(), forward.Third(), forward.Second())))
+                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward)))
                         yield return c;
 
                 if (game.Settings.CaptureBackwards)
@@ -39,7 +39,7 @@ namespace Checkers.Rules
                     var backward = diagonal.Reverse().SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                     if (IsLegalCapture(sequence.LayoutAfter, backward))
-                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward.First(), backward.Third(), backward.Second())))
+                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward)))
                             yield return c;
                 }
             }

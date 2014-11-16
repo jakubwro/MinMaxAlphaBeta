@@ -8,6 +8,8 @@ namespace Checkers
     using System;
     using Layout = IImmutableDictionary<Square, Checker>;
 
+    //TODO: change property LayoutAfter to Lazy<> to avoid multiple dictionary creation
+
     [DebuggerDisplay("{FromSquare} -> {ToSquare}")]
     public class Move : IEquatable<Move>
     {
@@ -30,7 +32,6 @@ namespace Checkers
                 yield return toSquare;
             }
         }
-
 
         public Move(Layout layoutBefore, Square fromSquare, Square toSquare)
         {

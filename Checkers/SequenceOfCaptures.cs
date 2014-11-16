@@ -8,8 +8,6 @@ namespace Checkers
 {
     using Layout = IImmutableDictionary<Square, Checker>;
 
-    //TODO: Add assertions
-
     [DebuggerDisplay("{FromSquare} -> [{CapturedString}] -> {ToSquare}")]
     public abstract class SequenceOfCaptures : Move//, IEquatable<SequenceOfCaptures>
     {
@@ -27,8 +25,12 @@ namespace Checkers
             return new EmptySequenceOfCaptures(currentState, fromSquare);
         }
 
-        public SequenceOfCaptures ContinueSequence(Square from, Square to, Square captured)
+        public SequenceOfCaptures ContinueSequence(IEnumerable<Square> squares)
         {
+            var from = squares.First();
+            var captured = squares.Second();
+            var to = squares.Third();
+
             Debug.Assert(this.ToSquare == from);
 
             return new CombinedSequenceOfCaptures(to, captured, this);

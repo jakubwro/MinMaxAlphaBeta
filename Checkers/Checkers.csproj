@@ -50,7 +50,6 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Binary\Gauge.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="IMove.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="Rules\FolkCaptureRule.cs" />
     <Compile Include="Rules\Rule.cs" />
