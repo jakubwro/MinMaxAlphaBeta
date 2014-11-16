@@ -18,9 +18,7 @@ namespace Checkers.Rules
 
         override public IEnumerable<IMove> Execute(GameState game, Square square)
         {
-            var captures = GenerateCaptures(game, SequenceOfCaptures.BeginSequence(game.Layout, square));
-        
-            return captures;
+            return GenerateCaptures(game, SequenceOfCaptures.BeginSequence(game.Layout, square));
         }
 
         private IEnumerable<SequenceOfCaptures> GenerateCaptures(GameState game, SequenceOfCaptures sequence)

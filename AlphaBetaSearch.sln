@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkers", "Checkers\Checke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{0C3308F6-AE47-46A2-8505-BD7EED21E89D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkers.UnitTests", "UnitTests\Checkers.UnitTests.csproj", "{6111C81A-87BE-4EF7-8C6A-5B167E9D6416}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkers.UnitTests", "Checkers.UnitTests\Checkers.UnitTests.csproj", "{6111C81A-87BE-4EF7-8C6A-5B167E9D6416}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinMaxAlphaBeta.UnitTests", "MinMaxAlphaBeta.UnitTests\MinMaxAlphaBeta.UnitTests.csproj", "{1A1DC6AD-8033-4B34-B18E-C30AB8176B0A}"
 EndProject
