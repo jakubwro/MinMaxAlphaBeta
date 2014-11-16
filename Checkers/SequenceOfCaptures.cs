@@ -8,63 +8,79 @@ namespace Checkers
 {
     using Layout = IImmutableDictionary<Square, Checker>;
 
-    [DebuggerDisplay("{FromSquare} -> [{CapturedString}] -> {ToSquare}")]
-    public abstract class SequenceOfCaptures : IMove, IEquatable<SequenceOfCaptures>
-    {
-        public abstract Layout LayoutBefore { get; }
-        public abstract Layout LayoutAfter { get; }
-        public abstract int Length { get; }
+    //TODO: Add assertions
 
-        public abstract Square ToSquare { get; }
-        public abstract Square FromSquare { get; }
-        
-        public IEnumerable<Square> Captured { get {return LayoutBefore.Keys.Except(LayoutAfter.Keys).Where(s => s != FromSquare); } }
-        public string CapturedString { get { return string.Join(",", Captured.Select(s => s.ToString())); } }
+    [DebuggerDisplay("{FromSquare} -> [{CapturedString}] -> {ToSquare}")]
+    public abstract class SequenceOfCaptures : Move//, IEquatable<SequenceOfCaptures>
+    {
+        public SequenceOfCaptures(Layout layoutBefore, Square fromSquare, Square toSquare)
+            : base(layoutBefore, fromSquare, toSquare)
+        {
+
+        }
+
+        //just for debug
+        public string CapturedString { get { return string.Join(",", CapturedSquares.Select(s => s.ToString())); } }
 
         public static SequenceOfCaptures BeginSequence(Layout currentState, Square fromSquare)
         {
             return new EmptySequenceOfCaptures(currentState, fromSquare);
         }
 
-        public SequenceOfCaptures ContinueSequence(Square to, Square captured)
+        public SequenceOfCaptures ContinueSequence(Square from, Square to, Square captured)
         {
+            Debug.Assert(this.ToSquare == from);
+
             return new CombinedSequenceOfCaptures(to, captured, this);
         }
 
         private class EmptySequenceOfCaptures : SequenceOfCaptures
         {
-            private readonly Layout currentState;
-            private readonly Square fromSquare;
-            public EmptySequenceOfCaptures(Layout currentState, Square fromSquare)
-            {
-                this.currentState = currentState;
-                this.fromSquare = fromSquare;
-            }
+            public EmptySequenceOfCaptures(Layout layoutBefore, Square fromSquare)
+                : base(layoutBefore, fromSquare, fromSquare) { }
 
-            override public int Length { get { return 0; } }
-            override public Layout LayoutBefore { get { return this.currentState; } }
-            override public Layout LayoutAfter { get { return this.currentState; } }
-            override public Square FromSquare { get { return fromSquare; } }
-            override public Square ToSquare { get { return fromSquare; } }
+            override public  Layout LayoutAfter { get {return base.LayoutBefore; } }
+
+            override public IEnumerable<Square> CapturedSquares { get { yield break; } }
+            override public IEnumerable<Square> VisitedSquares { get { yield return this.FromSquare; } }
         }
 
-        private class CombinedSequenceOfCaptures : SequenceOfCaptures, IEquatable<CombinedSequenceOfCaptures>
+        private class CombinedSequenceOfCaptures : SequenceOfCaptures
         {
-            private readonly Square toSquare;
             private readonly Square captured;
             private readonly SequenceOfCaptures restOfSequence;
 
             public CombinedSequenceOfCaptures(Square toSquare, Square captured, SequenceOfCaptures restOfSequence)
+                : base(restOfSequence.LayoutAfter, restOfSequence.ToSquare, toSquare)
             {
-                this.toSquare = toSquare;
                 this.captured = captured;
                 this.restOfSequence = restOfSequence;
             }
 
             override public Layout LayoutBefore { get { return restOfSequence.LayoutBefore; } }
-            override public int Length { get { return restOfSequence.Length + 1; } }
-            override public Square ToSquare { get { return this.toSquare; } }
             override public Square FromSquare { get { return restOfSequence.FromSquare; } }
+            
+            override public IEnumerable<Square> CapturedSquares
+            {
+                get
+                {
+                    foreach (var s in restOfSequence.CapturedSquares)
+                        yield return s;
+
+                    yield return this.captured;
+                }
+            }
+
+            override public  IEnumerable<Square> VisitedSquares
+            {
+                get
+                {
+                    foreach (var s in restOfSequence.VisitedSquares)
+                        yield return s;
+
+                    yield return this.ToSquare;
+                }
+            }
 
             override public Layout LayoutAfter
             {
@@ -72,45 +88,9 @@ namespace Checkers
                 {
                     var layout = restOfSequence.LayoutAfter;
                     Square from = restOfSequence.ToSquare;
-                    return layout.Add(toSquare, layout[from]).Remove(from).Remove(captured);
+                    return layout.Add(ToSquare, layout[from]).Remove(from).Remove(captured);
                 }
             }
-
-            public bool Equals(CombinedSequenceOfCaptures other)
-            {
-                if (other == null)
-                    return false;
-
-                if (this.Length != other.Length || this.toSquare != other.toSquare || this.captured != other.captured)
-                    return false;
-
-                return this.restOfSequence.Equals(other.restOfSequence);
-            }
         }
-
-        public bool Equals(SequenceOfCaptures other)
-        {
-            if (this.Length != other.Length)
-                return false;
-
-            if (this.Length == 0)   //Empty sequences
-                return this.FromSquare == other.FromSquare;
-  
-            return ((CombinedSequenceOfCaptures)this).Equals((CombinedSequenceOfCaptures)other);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is SequenceOfCaptures == false)
-                return false;
-
-            return this.Equals((SequenceOfCaptures)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode(); //TODO: fix this
-        }
-
     }
 }

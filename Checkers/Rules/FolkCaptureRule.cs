@@ -16,7 +16,7 @@ namespace Checkers.Rules
 
         private FolkCaptureRule() { }
 
-        override public IEnumerable<IMove> Execute(GameState game, Square square)
+        override public IEnumerable<Move> Execute(GameState game, Square square)
         {
             return GenerateCaptures(game, SequenceOfCaptures.BeginSequence(game.Layout, square));
         }
@@ -31,7 +31,7 @@ namespace Checkers.Rules
                 var forward = diagonal.SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                 if (IsLegalCapture(sequence.LayoutAfter, forward))
-                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward.Third(), forward.Second())))
+                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward.First(), forward.Third(), forward.Second())))
                         yield return c;
 
                 if (game.Settings.CaptureBackwards)
@@ -39,7 +39,7 @@ namespace Checkers.Rules
                     var backward = diagonal.Reverse().SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                     if (IsLegalCapture(sequence.LayoutAfter, backward))
-                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward.Third(), backward.Second())))
+                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward.First(), backward.Third(), backward.Second())))
                             yield return c;
                 }
             }

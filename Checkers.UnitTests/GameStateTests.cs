@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace CheckersTests
 {
+    using ConsoleUI;
     using Diagonal = IEnumerable<Square>;
     using Layout = IImmutableDictionary<Square, Checker>;
 
@@ -38,7 +39,7 @@ namespace CheckersTests
             var game = new GameState(settings, board, layout, ColorEnum.White);
 
             Assert.IsTrue(game.AvailableMoves.Count() == 1);
-            Assert.IsTrue(((SequenceOfCaptures)game.AvailableMoves.Single()).Length == 4);
+            Assert.IsTrue(((SequenceOfCaptures)game.AvailableMoves.Single()).CapturedSquares.Count() == 4);
 
             game = game.MakeMove(game.AvailableMoves.First());
 
@@ -58,7 +59,11 @@ namespace CheckersTests
             layout = layout.Remove(board.Squares.Skip(22).First());
             layout = layout.Add(board.Squares.Skip(13).First(), Checker.BlackFolk);
 
+            var presenter = new ConsolePresenter();
+
             var game = new GameState(settings, board, layout, ColorEnum.White);
+
+            Console.WriteLine(presenter.Render(game));
 
             Assert.IsTrue(game.AvailableMoves.Count() == 2);
             Assert.IsTrue(game.AvailableMoves.OfType<SequenceOfCaptures>().All(m => m.FromSquare == m.ToSquare));

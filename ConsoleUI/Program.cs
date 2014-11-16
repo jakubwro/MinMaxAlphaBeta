@@ -29,11 +29,14 @@ namespace ConsoleUI
                 ConsolePresenter presenter = new ConsolePresenter();
                 GameState game = new GameState(settings, Board.Board8x8);
 
-                while (game.AvailableMoves.Count() > 0)
+                Console.WriteLine(presenter.Render(game));
+
+                var moves = game.AvailableMoves.ToList();
+                while (moves.Count() > 0)
                 {
-                    Console.WriteLine(presenter.Render(game));
-                    var moves = game.AvailableMoves.ToList();
                     game = game.MakeMove(moves.Random());
+                    moves = game.AvailableMoves.ToList();
+                    Console.WriteLine(presenter.Render(game));
                 }
 
                 Console.WriteLine(presenter.Render(game));

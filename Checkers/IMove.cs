@@ -9,9 +9,12 @@ namespace Checkers
     using Layout = System.Collections.Immutable.IImmutableDictionary<Square, Checker>;
 
     //TODO: make it in a different way
-    public interface IMove
-    {
-        Layout LayoutBefore { get; }
-        Layout LayoutAfter { get; }
-    }
+    //public interface IMove
+    //{
+    //    Layout LayoutBefore { get; }
+    //    Layout LayoutAfter { get; }
+
+    //    IEnumerable<Square> CapturedSquares { get; }
+    //    IEnumerable<Square> VisitedSquares { get; }
+    //}
 }

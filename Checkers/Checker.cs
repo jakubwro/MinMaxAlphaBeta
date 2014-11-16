@@ -30,7 +30,7 @@ namespace Checkers
             this.color = color;
         }
 
-        public IEnumerable<IMove> ExecuteRules(GameState game, Square square)
+        public IEnumerable<Move> ExecuteRules(GameState game, Square square)
         {
             System.Diagnostics.Debug.Assert(game.Layout.ContainsKey(square), 
                 string.Format("Square '{0}' does not exist in a layout", square));
@@ -38,7 +38,7 @@ namespace Checkers
                 string.Format("Square '{0}' does not contain this checker", square));
 
             foreach(var rule in rules)
-                foreach(IMove move in rule.Execute(game, square))
+                foreach(Move move in rule.Execute(game, square))
                     yield return move;
         }
     }

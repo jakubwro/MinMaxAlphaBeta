@@ -17,7 +17,7 @@ namespace Checkers.Rules
         public static readonly IEnumerable<Rule> FolkRules = ImmutableList.CreateRange<Rule>(
             new Rule[] { FolkMoveRule.FolkMove, FolkCaptureRule.FolkCapture });
 
-        public abstract IEnumerable<IMove> Execute(GameState game, Square square);
+        public abstract IEnumerable<Move> Execute(GameState game, Square square);
 
         internal Layout GetNextState(Layout layout, IEnumerable<Square> squares)
         {

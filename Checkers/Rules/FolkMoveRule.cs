@@ -15,7 +15,7 @@ namespace Checkers.Rules
         public static readonly FolkMoveRule FolkMove = new FolkMoveRule();
         private FolkMoveRule() { }
 
-        public override IEnumerable<IMove> Execute(GameState game, Square square)
+        public override IEnumerable<Move> Execute(GameState game, Square square)
         {
             foreach (var diagonal in game.Diagonals)
             {

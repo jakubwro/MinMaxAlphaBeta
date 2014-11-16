@@ -21,22 +21,26 @@ namespace Checkers
         //public Board Board { get { return this.board; } }
         public Layout Layout { get { return this.layout; } }
         public ColorEnum ActivePlayer { get { return this.activePlayer; } }
-        public IEnumerable<IMove> AvailableMoves
+        public IEnumerable<Move> AvailableMoves
         {
             get
             {
                 var moves = GetPossibleMoves().ToList();
+                var captures = moves.Where(m => m.CapturedSquares.Any()).ToList();
 
-                if (moves.Any(m => m is SequenceOfCaptures))
+                if (captures.Any())
                 {
                     if (settings.MandatoryCaptures)
-                        moves = moves.Where(m => m is SequenceOfCaptures).ToList();
-
-                    if (settings.LongestCaptureSequence)
                     {
-                        int maxLength = moves.OfType<SequenceOfCaptures>().Max(m => m.Length);
-                        moves = moves.OfType<SequenceOfCaptures>().Where(m => m.Length == maxLength).OfType<IMove>().ToList();
+                        if (settings.LongestCaptureSequence)
+                        {
+                            int maxLength = captures.Max(m => m.CapturedSquares.Count());
+                            captures = captures.Where(m => m.CapturedSquares.Count() == maxLength).ToList();
+                        }
+
+                        moves = captures;
                     }
+
                 }
 
                 return moves;
@@ -58,8 +62,7 @@ namespace Checkers
         {
             this.settings = settings;
             this.board = board;
-            this.layout = board.InitialLayout;
-
+            this.layout = board.InitialLayout;         
             this.activePlayer = ColorEnum.White;
         }
 
@@ -68,11 +71,10 @@ namespace Checkers
         {
             this.settings = settings;
             this.board = board;
-            this.layout = layout;
-            this.activePlayer = activePlayer;
+            this.layout = layout;this.activePlayer = activePlayer;
         }
 
-        private GameState(GameState gameState, IMove move)
+        private GameState(GameState gameState, Move move)
         {
             this.settings = gameState.Settings;
             this.board = gameState.board;
@@ -81,7 +83,7 @@ namespace Checkers
         }
 
 
-        public GameState MakeMove(IMove move) //TODO: change to TryMakeMove
+        public GameState MakeMove(Move move) //TODO: change to TryMakeMove
         {
             if (!this.AvailableMoves.Any(m => m.Equals(move)))
                 throw new InvalidOperationException(string.Format("{0} is illegal move!", move));
@@ -89,7 +91,7 @@ namespace Checkers
             return new GameState(this, move);
         }
 
-        private IEnumerable<IMove> GetPossibleMoves()
+        private IEnumerable<Move> GetPossibleMoves()
         {
             foreach (var square in layout.Keys)
             {

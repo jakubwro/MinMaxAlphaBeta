@@ -6,20 +6,31 @@ using System.Linq;
 namespace Checkers
 {
     using System;
-using Layout = IImmutableDictionary<Square, Checker>;
+    using Layout = IImmutableDictionary<Square, Checker>;
 
     [DebuggerDisplay("{FromSquare} -> {ToSquare}")]
-    public class Move : IMove, IEquatable<Move>
+    public class Move : IEquatable<Move>
     {
         private readonly Layout layoutBefore;
         private readonly Square fromSquare;
         private readonly Square toSquare;
 
-        public Layout LayoutBefore { get { return layoutBefore; } }
-        public Square FromSquare { get { return fromSquare; } }
-        public Square ToSquare { get { return toSquare; } }
-        
-        public Layout LayoutAfter { get { return layoutBefore.Add(toSquare, layoutBefore[fromSquare]).Remove(fromSquare); } }
+        virtual public Layout LayoutBefore { get { return layoutBefore; } }
+        virtual public Layout LayoutAfter { get { return layoutBefore.Add(toSquare, layoutBefore[fromSquare]).Remove(fromSquare); } }
+        virtual public Square FromSquare { get { return fromSquare; } }
+        virtual public Square ToSquare { get { return toSquare; } }
+
+
+        virtual public IEnumerable<Square> CapturedSquares { get { yield break; } }
+        virtual public IEnumerable<Square> VisitedSquares
+        {
+            get
+            {
+                yield return fromSquare;
+                yield return toSquare;
+            }
+        }
+
 
         public Move(Layout layoutBefore, Square fromSquare, Square toSquare)
         {
@@ -28,17 +39,20 @@ using Layout = IImmutableDictionary<Square, Checker>;
             this.toSquare = toSquare;
         }
 
-        public override string ToString()
+        override public string ToString()
         {
             return string.Format("{0} -> {1}", FromSquare, ToSquare);
         }
 
         public bool Equals(Move other)
         {
-            return this.fromSquare == other.fromSquare && this.toSquare == other.toSquare;
+            if (other == null)
+                return false;
+
+            return this.VisitedSquares.SequenceEqual(other.VisitedSquares);
         }
 
-        public override bool Equals(object obj)
+        override public bool Equals(object obj)
         {
             if (obj is Move == false)
                 return false;
@@ -46,9 +60,13 @@ using Layout = IImmutableDictionary<Square, Checker>;
             return this.Equals((Move)obj);
         }
 
-        public override int GetHashCode()
+        override public int GetHashCode()
         {
-            return this.fromSquare.GetHashCode() ^ this.toSquare.GetHashCode();
+            int hash = 0;
+            foreach (Square s in this.VisitedSquares)
+                hash ^= s.GetHashCode();
+
+            return hash;
         }
     }
 }

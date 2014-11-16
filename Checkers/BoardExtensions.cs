@@ -35,17 +35,5 @@ namespace Checkers
             int index = new Random(DateTime.Now.Millisecond).Next(0, count - 1);
             return sequence.ElementAt(index);
         }
-
-        //public static IImmutableSet<Square> OfColor(this IImmutableDictionary<Square, Checker> layout, ColorEnum color)
-        //{
-        //    return ImmutableSortedSet.CreateRange<Square>(layout.Where(kv => kv.Value.Color == color).Select(kv => kv.Key));
-        //}
-
-        public static Checker GetChecker(this IMove move)
-        {
-            var square = move.LayoutAfter.Keys.Except(move.LayoutBefore.Keys).Single();
-
-            return move.LayoutAfter[square];
-        }
     }
 }
