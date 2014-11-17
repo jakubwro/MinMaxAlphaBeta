@@ -7,17 +7,11 @@ using MinMaxAlphaBeta;
 
 namespace Checkers.FastModel
 {
-    public class Gauge : IGauge<State, int>
+    public class BinaryStateGauge : Gauge<State, int>
     {
-        public Measure<int> Measure(State state)
+        protected override int ComputeValue(State state)
         {
-            if (state.IsTerminal == false)
-            {
-                //TODO: Maybe non terminal state should be measurable too?
-                throw new InvalidOperationException("Cannot simply measure non terminal state");
-            }
-
-            return Measure<int>.Create(state.WhiteKingsCount() - state.BlackKingsCount());
+            return state.WhiteKingsCount() - state.BlackKingsCount();
         }
     }
 }

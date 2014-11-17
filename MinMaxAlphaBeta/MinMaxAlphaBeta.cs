@@ -11,9 +11,9 @@ namespace MinMaxAlphaBeta
         where TState : IState<TState>
         where TMeasure : IComparable<TMeasure>, IComparable, IEquatable<TMeasure>
     {
-        IGauge<TState, TMeasure> gauge;
+        Gauge<TState, TMeasure> gauge;
 
-        public MinMaxAlphaBeta(IGauge<TState, TMeasure> gauge)
+        public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
         {
             this.gauge = gauge;
         }
@@ -30,7 +30,7 @@ namespace MinMaxAlphaBeta
 
             Measure<TMeasure> v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity);
             
-            return state.GetNextStates().First(s => gauge.Measure(s) == v);
+            return state.GetNextStates().First(s => gauge.Measure(s) == v); //TODO: bug
         }
 
         internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)

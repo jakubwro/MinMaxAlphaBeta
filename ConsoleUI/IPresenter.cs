@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using MinMaxAlphaBeta;
 
-namespace ConsoleApplication1
+namespace ConsoleUI
 {
     public interface IPresenter<TState, TResult>
         where TState : IState<TState>

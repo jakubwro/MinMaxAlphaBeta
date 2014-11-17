@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions.cs" />
-    <Compile Include="IGauge.cs" />
+    <Compile Include="Gauge.cs" />
     <Compile Include="IMinMaxSearch.cs" />
     <Compile Include="Memoizer.cs" />
     <Compile Include="MinMaxAlphaBetaMemo.cs" />

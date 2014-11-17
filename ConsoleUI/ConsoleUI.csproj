@@ -48,6 +48,7 @@
     <Compile Include="ConsolePresenter.cs" />
     <Compile Include="ConsolePlayer.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="GameStateGauge.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="IPresenter.cs" />
     <Compile Include="MinMaxPlayer.cs" />
