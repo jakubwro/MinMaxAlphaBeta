@@ -23,19 +23,17 @@ namespace MinMaxAlphaBeta
         /// </summary>
         /// <param name="state"></param>
         /// <returns>Next state</returns>
-        virtual public TState MinMax(TState state)
+        public TState MinMax(TState state)
         {
             if (state.IsTerminal)
                 return state; //TODO: throw?
 
             Measure<TMeasure> v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity);
             
-            //TODO: randomize selection of equal nodes
             return state.GetNextStates().First(s => gauge.Measure(s) == v);
         }
 
-        //TODO: not necessary to make this virtual, memoize by private inheritence
-        virtual internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
+        internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
         {          
             if (state.IsTerminal)
                 return gauge.Measure(state);
@@ -49,13 +47,13 @@ namespace MinMaxAlphaBeta
                 if (v >= β)
                     return v;
 
-                α = Min(α, v);
+                α = Max(α, v);
             }
 
             return v;
         }
 
-        virtual internal Measure<TMeasure> MinEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
+        internal Measure<TMeasure> MinEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
         {
             if (state.IsTerminal)
                 return gauge.Measure(state);
