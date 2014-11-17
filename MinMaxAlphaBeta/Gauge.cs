@@ -14,7 +14,7 @@ namespace MinMaxAlphaBeta
         
         public Measure<TMeasure> Measure(TState state)
         {
-            if (state.IsTerminal)
+            if (!state.IsTerminal)
                 throw new InvalidOperationException("Cannot simply measure non terminal state");
 
             return Measure<TMeasure>.Create(ComputeValue(state));
