@@ -14,12 +14,15 @@ namespace ConsoleUI
         {
             StringBuilder stringBuilder = new StringBuilder();
 
-            stringBuilder.AppendLine("+---+---+---+---+---+---+---+---+");
+            stringBuilder.Append("+");
+            for (int i = 0; i < state.BoardSize; ++i)
+                stringBuilder.Append("---+");   
+            stringBuilder.AppendLine();
 
-            for (int i = 7; i >= 0; --i)
+            for (int i = state.BoardSize-1; i >= 0; --i)
             {
                 stringBuilder.Append("|");
-                for (int j = 0; j < 8; ++j)
+                for (int j = 0; j < state.BoardSize; ++j)
                 {
                     string square = string.Format("{0}{1}", (char)('A'+j), i+1);
 
@@ -33,7 +36,10 @@ namespace ConsoleUI
                 }
                 stringBuilder.AppendLine();
 
-                stringBuilder.AppendLine("+---+---+---+---+---+---+---+---+");
+                stringBuilder.Append("+");
+                for (int k = 0; k < state.BoardSize; ++k)
+                    stringBuilder.Append("---+");
+                stringBuilder.AppendLine();
             }
 
 //            stringBuilder.AppendLine(@"

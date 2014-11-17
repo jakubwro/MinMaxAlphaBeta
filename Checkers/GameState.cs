@@ -18,7 +18,8 @@ namespace Checkers
         private readonly ColorEnum activePlayer;
         private readonly int whiteScore;
         private readonly int blackScore;
-        
+
+        public int BoardSize { get { return board.Size; } }
         public Layout Layout { get { return this.layout; } }
         public ColorEnum ActivePlayer { get { return this.activePlayer; } }
         public int WhiteScore { get { return whiteScore; } }
