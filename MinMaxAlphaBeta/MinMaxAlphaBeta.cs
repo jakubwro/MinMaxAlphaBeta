@@ -13,24 +13,36 @@ namespace MinMaxAlphaBeta
     {
         Gauge<TState, TMeasure> gauge;
 
+        long counter = 0;
+
         public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
         {
             this.gauge = gauge;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="state"></param>
-        /// <returns>Next state</returns>
         public TState MinMax(TState state)
         {
             if (state.IsTerminal)
-                return state; //TODO: throw?
+                throw new InvalidOperationException("Cannot find next state for terminal state");
 
-            Measure<TMeasure> v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity);
-            
-            return state.GetNextStates().First(s => gauge.Measure(s) == v); //TODO: bug
+            TState result = default(TState);
+            var α = Measure<TMeasure>.MinusInfinity;
+            var β = Measure<TMeasure>.PlusInfinity;
+
+            foreach(TState s in state.GetNextStates())
+            {
+                counter++;
+
+                var min = MinEvaluation(s, α, β);
+
+                if (min > α)
+                {
+                    α = min;
+                    result = s;
+                }
+            }
+
+            return result;
         }
 
         internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
@@ -42,6 +54,8 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
+                counter++;
+
                 v = Max(v, MinEvaluation(nextState, α, β));
              
                 if (v >= β)
@@ -62,6 +76,8 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
+                counter++;
+
                 v = Min(v, MaxEvaluation(nextState, α, β));
 
                 if (v <= α)

@@ -41,7 +41,7 @@ namespace Checkers
 
         override public string ToString()
         {
-            return string.Format("{0} -> {1}", FromSquare, ToSquare);
+            return string.Join(">", this.VisitedSquares);
         }
 
         public bool Equals(Move other)

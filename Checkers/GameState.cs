@@ -119,15 +119,16 @@ namespace Checkers
             }
         }
 
-        bool IState<GameState>.IsTerminal
+        public bool IsTerminal
         {
             get { return this.AvailableMoves.Count() == 0;  }
         }
 
-        IEnumerable<GameState> IState<GameState>.GetNextStates()
+        public IEnumerable<GameState> GetNextStates()
         {
             return from move in AvailableMoves
                    select MakeMove(move);
         }
+
     }
 }

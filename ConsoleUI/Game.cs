@@ -29,8 +29,8 @@ namespace ConsoleUI
                 //TODO: add message, state number, etc
                 TState nextState = activePlayer.MakeMove(state);
 
-                if (false == state.GetNextStates().Any(s => s.Equals(nextState)))
-                    throw new InvalidOperationException("Illegal move!");
+                //if (false == state.GetNextStates().Any(s => s.Equals(nextState)))
+                //    throw new InvalidOperationException("Illegal move!");
 
                 yield return state;
                 state = nextState;

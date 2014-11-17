@@ -12,6 +12,8 @@ namespace Checkers
 
     public partial class Board
     {
+        public static readonly Board Board4x4 = new Board(4);
+        public static readonly Board Board6x6 = new Board(6);
         public static readonly Board Board8x8 = new Board(8);
         public static readonly Board Board10x10 = new Board(10);
         public static readonly Board Board12x12 = new Board(12);

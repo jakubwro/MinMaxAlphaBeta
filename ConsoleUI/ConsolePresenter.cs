@@ -33,7 +33,7 @@ namespace ConsoleUI
                     }
                     stringBuilder.Append(string.Format(" {0} |", v));
                 }
-                stringBuilder.AppendLine();
+                stringBuilder.AppendLine((i+1).ToString());
 
                 stringBuilder.Append("+");
                 for (int k = 0; k < state.BoardSize; ++k)
@@ -41,32 +41,25 @@ namespace ConsoleUI
                 stringBuilder.AppendLine();
             }
 
-//            stringBuilder.AppendLine(@"
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+
-//|   |   |   |   |   |   |   |   |
-//+---+---+---+---+---+---+---+---+");
+            stringBuilder.Append(" ");
+            for (int k = 0; k < state.BoardSize; ++k)
+                stringBuilder.Append(string.Format(" {0}  ", (char)('A' + k)));
+            stringBuilder.AppendLine();
 
             return stringBuilder.ToString();
         }
 
-        public bool TryAccept(string move, out GameState state)
+        public bool TryAccept(GameState state, string input, out GameState next)
         {
-            state = default(GameState);
-            return false;
+            next = null;
+
+            var move = state.AvailableMoves.SingleOrDefault(m => m.ToString().Equals(input, StringComparison.InvariantCultureIgnoreCase));
+
+            if (move == null)
+                return false;
+
+            next = state.MakeMove(move);
+            return true;
         }
     }
 }

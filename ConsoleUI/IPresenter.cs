@@ -11,6 +11,6 @@ namespace ConsoleUI
     {
         TResult Render(TState state);
 
-        bool TryAccept(TResult input, out TState state);
+        bool TryAccept(TState state, TResult input, out TState next);
     }
 }

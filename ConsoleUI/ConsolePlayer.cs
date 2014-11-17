@@ -26,7 +26,7 @@ namespace ConsoleUI
             Console.WriteLine(presenter.Render(state));
 
             TState move;
-            while (presenter.TryAccept(Console.ReadLine(), out move) == false)
+            while (false == presenter.TryAccept(state, Console.ReadLine(), out move))
             {
                 Console.WriteLine("Invalid move, try again");
             }

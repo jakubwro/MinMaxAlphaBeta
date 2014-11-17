@@ -14,54 +14,52 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            //var board = Board.Board12x12;
-
-            //foreach(var diagonal in board.Diagonals)
+            //while (true)
             //{
-            //    foreach (var square in diagonal)
-            //        Console.Write("{0}, ", square);
+            //    var settings = new GameSettings();
+            //    ConsolePresenter presenter = new ConsolePresenter();
+            //    GameState game = new GameState(settings, Board.Board8x8);
 
-            //    Console.WriteLine();
+            //    Console.WriteLine(presenter.Render(game));
+
+            //    var moves = game.AvailableMoves.ToList();
+            //    while (moves.Count() > 0)
+            //    {
+            //        game = game.MakeMove(moves.Random());
+            //        moves = game.AvailableMoves.ToList();
+            //        Console.WriteLine(presenter.Render(game));
+            //    }
+
+            //    Console.WriteLine(presenter.Render(game));
             //}
-            while (true)
-            {
-                var settings = new GameSettings();
-                ConsolePresenter presenter = new ConsolePresenter();
-                GameState game = new GameState(settings, Board.Board8x8);
 
-                Console.WriteLine(presenter.Render(game));
 
-                var moves = game.AvailableMoves.ToList();
-                while (moves.Count() > 0)
-                {
-                    game = game.MakeMove(moves.Random());
-                    moves = game.AvailableMoves.ToList();
-                    Console.WriteLine(presenter.Render(game));
-                }
+            MinMaxAlphaBeta<GameState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<GameState, int>(new GameStateGauge());
+            var presenter = new ConsolePresenter();
 
-                Console.WriteLine(presenter.Render(game));
-            }
-            //var squares = board.Squares;
-            
-            //MinMaxAlphaBeta<State, int> minMaxAlphaBeta = new MinMaxAlphaBeta<State, int>(new Gauge());
-               
-            //IPlayer<State> player1 = new RandomPlayer<State>();
-            //IPlayer<State> player2 = new MinMaxPlayer<State>(minMaxAlphaBeta);
+            IPlayer<GameState> minMaxAlphaBetaPlayer = new MinMaxPlayer<GameState>(minMaxAlphaBeta);
+            IPlayer<GameState> randomPlayer = new RandomPlayer<GameState>();
+            IPlayer<GameState> consolePlayer = new ConsolePlayer<GameState>(presenter);
 
-            //Game<State> game = new Game<State>(player1, player2);
+            var settings = new GameSettings(true, true, false);
+            GameState gameState = new GameState(settings, Board.Board4x4);
 
-            //IEnumerable<State> gameplay = game.Play(State.InitialState);
+            Game<GameState> game = new Game<GameState>(randomPlayer, minMaxAlphaBetaPlayer);
 
-            //var finalState = gameplay.Last();
-            //Debug.Assert(true == finalState.IsTerminal);
+            IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 
-            //int player1Pts = finalState.WhiteKingsCount();
-            //int player2Pts = finalState.BlackKingsCount();
+            var finalState = gameplay.Last();
+            Debug.Assert(true == finalState.IsTerminal);
+           
+            int player1Pts = finalState.WhiteScore;
+            int player2Pts = finalState.BlackScore;
 
-            //if (player1Pts == player2Pts)
-            //    Console.WriteLine("Draw.");
-            //else
-            //    Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2" );
+            if (player1Pts == player2Pts)
+                Console.WriteLine("Draw.");
+            else
+                Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2");
+
+            Console.ReadKey();
 
         }
     }
