@@ -20,7 +20,7 @@ namespace CheckersTests
             GameSettings settings = new GameSettings();
             Board board = Board.Board8x8;
             Layout layout = board.InitialLayout;
-            var game = new GameState(settings, board, layout, ColorEnum.White);
+            var game = new GameState(settings, board, layout, ColorEnum.White, 0, 0);
 
             Assert.IsTrue(game.AvailableMoves.Count() == 7);
 
@@ -36,10 +36,10 @@ namespace CheckersTests
             layout = layout.Remove(board.Squares.Skip(25).First());
             layout = layout.Remove(board.Squares.Skip(27).First());
 
-            var game = new GameState(settings, board, layout, ColorEnum.White);
+            var game = new GameState(settings, board, layout, ColorEnum.White, 0, 0);
 
             Assert.IsTrue(game.AvailableMoves.Count() == 1);
-            Assert.IsTrue(((SequenceOfCaptures)game.AvailableMoves.Single()).CapturedSquares.Count() == 4);
+            Assert.IsTrue(((Capture)game.AvailableMoves.Single()).CapturedSquares.Count() == 4);
 
             game = game.MakeMove(game.AvailableMoves.First());
 
@@ -61,12 +61,12 @@ namespace CheckersTests
 
             var presenter = new ConsolePresenter();
 
-            var game = new GameState(settings, board, layout, ColorEnum.White);
+            var game = new GameState(settings, board, layout, ColorEnum.White, 0, 0);
 
             Console.WriteLine(presenter.Render(game));
 
             Assert.IsTrue(game.AvailableMoves.Count() == 2);
-            Assert.IsTrue(game.AvailableMoves.OfType<SequenceOfCaptures>().All(m => m.FromSquare == m.ToSquare));
+            Assert.IsTrue(game.AvailableMoves.OfType<Capture>().All(m => m.FromSquare == m.ToSquare));
         }
     }
 }

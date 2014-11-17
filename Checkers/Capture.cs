@@ -9,9 +9,9 @@ namespace Checkers
     using Layout = IImmutableDictionary<Square, Checker>;
 
     [DebuggerDisplay("{FromSquare} -> [{CapturedString}] -> {ToSquare}")]
-    public abstract class SequenceOfCaptures : Move//, IEquatable<SequenceOfCaptures>
+    public abstract class Capture : Move
     {
-        public SequenceOfCaptures(Layout layoutBefore, Square fromSquare, Square toSquare)
+        public Capture(Layout layoutBefore, Square fromSquare, Square toSquare)
             : base(layoutBefore, fromSquare, toSquare)
         {
 
@@ -20,12 +20,12 @@ namespace Checkers
         //just for debug
         public string CapturedString { get { return string.Join(",", CapturedSquares.Select(s => s.ToString())); } }
 
-        public static SequenceOfCaptures BeginSequence(Layout currentState, Square fromSquare)
+        public static Capture BeginSequence(Layout currentState, Square fromSquare)
         {
             return new EmptySequenceOfCaptures(currentState, fromSquare);
         }
 
-        public SequenceOfCaptures ContinueSequence(IEnumerable<Square> squares)
+        public Capture Continue(IEnumerable<Square> squares)
         {
             var from = squares.First();
             var captured = squares.Second();
@@ -36,23 +36,23 @@ namespace Checkers
             return new CombinedSequenceOfCaptures(to, captured, this);
         }
 
-        private class EmptySequenceOfCaptures : SequenceOfCaptures
+        private class EmptySequenceOfCaptures : Capture
         {
             public EmptySequenceOfCaptures(Layout layoutBefore, Square fromSquare)
                 : base(layoutBefore, fromSquare, fromSquare) { }
 
-            override public  Layout LayoutAfter { get {return base.LayoutBefore; } }
+            override public Layout LayoutAfter { get { return base.LayoutBefore; } }
 
             override public IEnumerable<Square> CapturedSquares { get { yield break; } }
             override public IEnumerable<Square> VisitedSquares { get { yield return this.FromSquare; } }
         }
 
-        private class CombinedSequenceOfCaptures : SequenceOfCaptures
+        private class CombinedSequenceOfCaptures : Capture
         {
             private readonly Square captured;
-            private readonly SequenceOfCaptures restOfSequence;
+            private readonly Capture restOfSequence;
 
-            public CombinedSequenceOfCaptures(Square toSquare, Square captured, SequenceOfCaptures restOfSequence)
+            public CombinedSequenceOfCaptures(Square toSquare, Square captured, Capture restOfSequence)
                 : base(restOfSequence.LayoutAfter, restOfSequence.ToSquare, toSquare)
             {
                 this.captured = captured;
@@ -61,7 +61,7 @@ namespace Checkers
 
             override public Layout LayoutBefore { get { return restOfSequence.LayoutBefore; } }
             override public Square FromSquare { get { return restOfSequence.FromSquare; } }
-            
+
             override public IEnumerable<Square> CapturedSquares
             {
                 get
@@ -73,7 +73,7 @@ namespace Checkers
                 }
             }
 
-            override public  IEnumerable<Square> VisitedSquares
+            override public IEnumerable<Square> VisitedSquares
             {
                 get
                 {

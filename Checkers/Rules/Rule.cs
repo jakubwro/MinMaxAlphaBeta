@@ -25,11 +25,5 @@ namespace Checkers.Rules
                          .Remove(squares.First())
                          .Remove(squares.Second());
         }
-
-        internal Move GetMove(Layout layout, Square first, Square second)
-        {
-            return new Move(layout, first, second);
-        }
-
     }
 }

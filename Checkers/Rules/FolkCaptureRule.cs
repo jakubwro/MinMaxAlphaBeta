@@ -18,10 +18,10 @@ namespace Checkers.Rules
 
         override public IEnumerable<Move> Execute(GameState game, Square square)
         {
-            return GenerateCaptures(game, SequenceOfCaptures.BeginSequence(game.Layout, square));
+            return GenerateCaptures(game, Capture.BeginSequence(game.Layout, square));
         }
 
-        private IEnumerable<SequenceOfCaptures> GenerateCaptures(GameState game, SequenceOfCaptures sequence)
+        private IEnumerable<Capture> GenerateCaptures(GameState game, Capture sequence)
         {
             foreach (var diagonal in game.Diagonals)
             {
@@ -31,7 +31,7 @@ namespace Checkers.Rules
                 var forward = diagonal.SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                 if (IsLegalCapture(sequence.LayoutAfter, forward))
-                    foreach (var c in CaptureRec(game, sequence.ContinueSequence(forward)))
+                    foreach (var c in CaptureRec(game, sequence.Continue(forward)))
                         yield return c;
 
                 if (game.Settings.CaptureBackwards)
@@ -39,15 +39,15 @@ namespace Checkers.Rules
                     var backward = diagonal.Reverse().SkipWhile(s => s != sequence.ToSquare).Take(3);
 
                     if (IsLegalCapture(sequence.LayoutAfter, backward))
-                        foreach (var c in CaptureRec(game, sequence.ContinueSequence(backward)))
+                        foreach (var c in CaptureRec(game, sequence.Continue(backward)))
                             yield return c;
                 }
             }
         }
 
-        private IEnumerable<SequenceOfCaptures> CaptureRec(GameState game, SequenceOfCaptures sequence)
+        private IEnumerable<Capture> CaptureRec(GameState game, Capture sequence)
         {               
-            foreach (SequenceOfCaptures c in GenerateCaptures(game, sequence))
+            foreach (Capture c in GenerateCaptures(game, sequence))
                 yield return c;
 
             yield return sequence;

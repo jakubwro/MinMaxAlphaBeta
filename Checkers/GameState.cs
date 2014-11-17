@@ -16,11 +16,14 @@ namespace Checkers
         private readonly Board board;
         private readonly Layout layout;
         private readonly ColorEnum activePlayer;
-        //private readonly IEnumerable<IMove> availableMoves;
-
-        //public Board Board { get { return this.board; } }
+        private readonly int whiteScore;
+        private readonly int blackScore;
+        
         public Layout Layout { get { return this.layout; } }
         public ColorEnum ActivePlayer { get { return this.activePlayer; } }
+        public int WhiteScore { get { return whiteScore; } }
+        public int BlackScore { get { return blackScore; } }
+
         public IEnumerable<Move> AvailableMoves
         {
             get
@@ -64,31 +67,44 @@ namespace Checkers
             this.board = board;
             this.layout = board.InitialLayout;         
             this.activePlayer = ColorEnum.White;
+            this.whiteScore = 0;
+            this.blackScore = 0;
         }
 
         ///Constructor for tests
-        internal GameState(GameSettings settings, Board board, Layout layout, ColorEnum activePlayer)
+        internal GameState(GameSettings settings, Board board, Layout layout, ColorEnum activePlayer, int whiteScore, int blackScore)
         {
             this.settings = settings;
             this.board = board;
             this.layout = layout;this.activePlayer = activePlayer;
+            this.whiteScore = whiteScore;
+            this.blackScore = blackScore;
         }
 
-        private GameState(GameState gameState, Move move)
-        {
-            this.settings = gameState.Settings;
-            this.board = gameState.board;
-            this.layout = move.LayoutAfter;
-            this.activePlayer = gameState.ActivePlayer == ColorEnum.White ? ColorEnum.Black : ColorEnum.White;
-        }
-
-
-        public GameState MakeMove(Move move) //TODO: change to TryMakeMove
+        public GameState MakeMove(Move move)
         {
             if (!this.AvailableMoves.Any(m => m.Equals(move)))
                 throw new InvalidOperationException(string.Format("{0} is illegal move!", move));
 
-            return new GameState(this, move);
+            bool isLastSquare = move.ToSquare.Row == (activePlayer == ColorEnum.White ? board.Size : 1);
+
+            var nextLayout = move.LayoutAfter;
+            var nextWhiteScore = whiteScore;
+            var nextBlackScore = blackScore;
+
+            if (isLastSquare)
+            {
+                nextLayout = nextLayout.Remove(move.ToSquare);
+
+                if (activePlayer == ColorEnum.White)
+                    nextWhiteScore += 1;
+                else
+                    nextBlackScore += 1;
+            }
+
+            var nextPlayer = activePlayer == ColorEnum.White ? ColorEnum.Black : ColorEnum.White;
+
+            return new GameState(this.settings, this.board, nextLayout, nextPlayer, nextWhiteScore, nextBlackScore);
         }
 
         private IEnumerable<Move> GetPossibleMoves()
@@ -110,7 +126,7 @@ namespace Checkers
         IEnumerable<GameState> IState<GameState>.GetNextStates()
         {
             return from move in AvailableMoves
-                   select new GameState(this, move);
+                   select MakeMove(move);
         }
     }
 }

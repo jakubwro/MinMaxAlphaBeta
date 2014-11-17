@@ -24,7 +24,7 @@ namespace Checkers.Rules
 
                 var next = diagonal.SkipWhile(s => s != square).SecondOrDefault();
                 if (next != null && game.Layout.ContainsKey(next) == false)
-                    yield return GetMove(game.Layout, square, next);
+                    yield return new Move(game.Layout, square, next);
             }
         }
     }

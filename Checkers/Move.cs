@@ -22,7 +22,6 @@ namespace Checkers
         virtual public Square FromSquare { get { return fromSquare; } }
         virtual public Square ToSquare { get { return toSquare; } }
 
-
         virtual public IEnumerable<Square> CapturedSquares { get { yield break; } }
         virtual public IEnumerable<Square> VisitedSquares
         {
