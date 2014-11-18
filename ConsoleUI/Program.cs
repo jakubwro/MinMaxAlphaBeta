@@ -33,8 +33,8 @@ namespace ConsoleUI
             //    Console.WriteLine(presenter.Render(game));
             //}
 
-
-            MinMaxAlphaBeta<GameState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<GameState, int>(new GameStateGauge());
+            var gauge = new GameStateGauge(ColorEnum.White);
+            MinMaxAlphaBeta<GameState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<GameState, int>(gauge);
             var presenter = new ConsolePresenter();
 
             IPlayer<GameState> minMaxAlphaBetaPlayer = new MinMaxPlayer<GameState>(minMaxAlphaBeta);
@@ -42,22 +42,31 @@ namespace ConsoleUI
             IPlayer<GameState> consolePlayer = new ConsolePlayer<GameState>(presenter);
 
             var settings = new GameSettings(true, true, false);
-            GameState gameState = new GameState(settings, Board.Board4x4);
+            GameState gameState = new GameState(settings, Board.Board6x6);
+            try
+            {
+                Game<GameState> game = new Game<GameState>(minMaxAlphaBetaPlayer, randomPlayer, presenter);
 
-            Game<GameState> game = new Game<GameState>(randomPlayer, minMaxAlphaBetaPlayer);
+                IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 
-            IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
+                var finalState = gameplay.Last();
+                Debug.Assert(true == finalState.IsTerminal);
 
-            var finalState = gameplay.Last();
-            Debug.Assert(true == finalState.IsTerminal);
-           
-            int player1Pts = finalState.WhiteScore;
-            int player2Pts = finalState.BlackScore;
+                int player1Pts = finalState.WhiteScore;
+                int player2Pts = finalState.BlackScore;
 
-            if (player1Pts == player2Pts)
-                Console.WriteLine("Draw.");
-            else
-                Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2");
+                Console.WriteLine(presenter.Render(finalState));
+
+                if (player1Pts == player2Pts)
+                    Console.WriteLine("Draw.");
+                else
+                    Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2");
+
+            }
+            catch(Exception exc)
+            {
+
+            }
 
             Console.ReadKey();
 

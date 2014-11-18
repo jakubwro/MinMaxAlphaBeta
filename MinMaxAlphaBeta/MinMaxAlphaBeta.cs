@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace MinMaxAlphaBeta
     {
         Gauge<TState, TMeasure> gauge;
 
-        long counter = 0;
+        Dictionary<TState, Measure<TMeasure>> memo = new Dictionary<TState, Measure<TMeasure>>();
 
         public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
         {
@@ -25,45 +26,45 @@ namespace MinMaxAlphaBeta
             if (state.IsTerminal)
                 throw new InvalidOperationException("Cannot find next state for terminal state");
 
-            TState result = default(TState);
-            var α = Measure<TMeasure>.MinusInfinity;
-            var β = Measure<TMeasure>.PlusInfinity;
+            var v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity);
 
-            foreach(TState s in state.GetNextStates())
-            {
-                counter++;
-
-                var min = MinEvaluation(s, α, β);
-
-                if (min > α)
-                {
-                    α = min;
-                    result = s;
-                }
-            }
+            var result = (from s in state.GetNextStates()
+                          where memo[s] == v
+                          select s).First();
 
             return result;
         }
 
         internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
-        {          
+        {
             if (state.IsTerminal)
                 return gauge.Measure(state);
-            
+
             Measure<TMeasure> v = α;
 
             foreach (TState nextState in state.GetNextStates())
             {
-                counter++;
+                Measure<TMeasure> memoized;
+                if (memo.TryGetValue(nextState, out memoized))
+                    v = memoized;
+                else
+                    v = Max(v, MinEvaluation(nextState, α, β));
 
-                v = Max(v, MinEvaluation(nextState, α, β));
-             
+                memo[nextState] = v;
+
                 if (v >= β)
+                {
+                    if (memo.ContainsKey(state))
+                        Debug.Assert(memo[state] == v);
+                    memo[state] = v;
                     return v;
-
+                }
                 α = Max(α, v);
             }
 
+            if (memo.ContainsKey(state))
+                Debug.Assert(memo[state] == v);
+            memo[state] = v;
             return v;
         }
 
@@ -76,16 +77,26 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
-                counter++;
-
-                v = Min(v, MaxEvaluation(nextState, α, β));
+                Measure<TMeasure> memoized;
+                if (memo.TryGetValue(nextState, out memoized))
+                    v = memoized;
+                else
+                    v = Min(v, MaxEvaluation(nextState, α, β));
 
                 if (v <= α)
+                {
+                    if (memo.ContainsKey(state))
+                        Debug.Assert(memo[state] == v);
+                    memo[state] = v;
                     return v;
+                }
 
                 β = Min(β, v);
             }
 
+            if (memo.ContainsKey(state))
+                Debug.Assert(memo[state] == v);
+            memo[state] = v;
             return v;
         }
 
@@ -94,7 +105,7 @@ namespace MinMaxAlphaBeta
             return first >= second ? first : second;
         }
 
-        static Measure< TMeasure> Min(Measure<TMeasure> first, Measure<TMeasure> second)
+        static Measure<TMeasure> Min(Measure<TMeasure> first, Measure<TMeasure> second)
         {
             return first <= second ? first : second;
         }

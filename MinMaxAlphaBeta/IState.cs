@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MinMaxAlphaBeta
 {
-    public interface IState<TState>
+    public interface IState<TState> : IEquatable<TState>
     {
         /// <summary>
         /// Tells if state if terminal.

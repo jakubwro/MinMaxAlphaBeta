@@ -25,10 +25,14 @@ namespace Checkers
         public int WhiteScore { get { return whiteScore; } }
         public int BlackScore { get { return blackScore; } }
 
+        private IEnumerable<Move> availableMoves;
         public IEnumerable<Move> AvailableMoves
         {
             get
             {
+                if (availableMoves != null)
+                    return availableMoves;
+
                 var moves = GetPossibleMoves().ToList();
                 var captures = moves.Where(m => m.CapturedSquares.Any()).ToList();
 
@@ -46,7 +50,7 @@ namespace Checkers
                     }
 
                 }
-
+                availableMoves = moves;
                 return moves;
             }
         }
@@ -130,5 +134,65 @@ namespace Checkers
                    select MakeMove(move);
         }
 
+        public bool Equals(GameState other)
+        {
+            if (other == null)
+                return false;
+
+            if (this.activePlayer != other.activePlayer)
+                return false;
+
+            if (this.whiteScore != other.whiteScore || this.blackScore != other.blackScore)
+                return false;
+
+            if (this.layout.Count != other.layout.Count)
+                return false;
+
+            if (this.layout.Keys.Except(other.layout.Keys).Any())
+                return false;
+
+            if (other.layout.Keys.Except(this.layout.Keys).Any())
+                return false;
+
+            foreach (Square key in this.layout.Keys)
+                if (this.layout[key] != other.layout[key])
+                    return false;
+
+            if (this.board != other.board)
+                return false;
+
+            if (this.settings != other.settings)
+                return false;
+
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            GameState other = obj as GameState;
+            if (other == null)
+                return false;
+
+            return this.Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+
+                foreach (var kv in this.layout)
+                {
+                    hash = hash * 23 + kv.Key.GetHashCode();
+                    hash = hash * 23 + kv.Value.GetHashCode();
+                }
+
+                hash = hash * 23 + activePlayer.GetHashCode();
+                hash = hash * 23 + whiteScore.GetHashCode();
+                hash = hash * 23 + blackScore.GetHashCode();
+                return hash;
+            }
+        }
     }
 }

@@ -89,5 +89,31 @@ namespace CheckersTests
                 SearchRec(game.MakeMove(move), level+1, limit);
             }
         }
+
+        [TestMethod]
+        public void GameState_Equality()
+        {
+            GameSettings settings = new GameSettings();
+            Board board = Board.Board8x8;
+
+            var game1 = new GameState(settings, board);
+            var game2 = new GameState(settings, board);
+
+            Assert.IsTrue(game1.Equals(game2));
+            Assert.IsTrue(game1.Equals((object)game2));
+            Assert.IsTrue(game1.GetHashCode() == game2.GetHashCode());
+
+            game1 = game1.MakeMove(game1.AvailableMoves.Single(m => m.ToString() == "A3>B4"));
+
+            Assert.IsFalse(game1.Equals(game2));
+            Assert.IsFalse(game1.Equals((object)game2));
+            Assert.IsFalse(game1.GetHashCode() == game2.GetHashCode());
+
+            game2 = game2.MakeMove(game2.AvailableMoves.Single(m => m.ToString() == "A3>B4"));
+
+            Assert.IsTrue(game1.Equals(game2));
+            Assert.IsTrue(game1.Equals((object)game2));
+            Assert.IsTrue(game1.GetHashCode() == game2.GetHashCode());
+        }
     }
 }

@@ -10,15 +10,33 @@ namespace ConsoleUI
 {
     public class GameStateGauge : Gauge<GameState, int>
     {
+        private readonly ColorEnum playerColor;
+
+        public GameStateGauge(ColorEnum playerColor)
+        {
+            this.playerColor = playerColor;
+        }
+
         protected override int ComputeValue(GameState state)
         {
-            if (state.WhiteScore <= state.BlackScore)
+            if (this.playerColor == ColorEnum.White)
+            {
+                if (state.WhiteScore <= state.BlackScore)
+                    return 0;
+
+                if (state.WhiteScore - state.BlackScore > 5)
+                    return 5;
+
+                return state.WhiteScore - state.BlackScore;
+            }
+
+            if (state.BlackScore <= state.WhiteScore)
                 return 0;
 
-            if (state.WhiteScore - state.BlackScore > 5)
+            if (state.BlackScore - state.WhiteScore > 5)
                 return 5;
 
-            return state.WhiteScore - state.BlackScore;
+            return state.BlackScore - state.WhiteScore;
         }
     }
 }
