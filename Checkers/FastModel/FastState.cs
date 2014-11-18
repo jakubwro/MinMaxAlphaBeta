@@ -1,0 +1,102 @@
+﻿using MinMaxAlphaBeta;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Checkers.FastModel
+{
+    [StructLayout(LayoutKind.Explicit, Size = 8)]
+    public struct FastState : IState<FastState>, IEquatable<FastState>
+    {
+        public static readonly FastState InitialState = new FastState(0x00000fff, 0xfff00000);
+
+        static readonly UInt32 WhiteFolkMask = 0x0fffffff;
+        static readonly UInt32 WhiteKingMask = 0x70000000;
+        static readonly UInt32 WhiteActiveMask = 0x80000000;
+
+        static readonly UInt32 BlackFolkMask = 0xfffffff0;
+        static readonly UInt32 BlackKingMask = 0x00000007;
+        static readonly UInt32 BlackActiveMask = 0x80000000;
+
+        [FieldOffset(0)]
+        readonly UInt32 white;
+        [FieldOffset(4)]
+        readonly UInt32 black;
+
+        private FastState(UInt32 white, UInt32 black)
+        {
+            this.white = white;
+            this.black = black;
+        }
+
+        internal FastState(UInt32 white, UInt32 black,
+                           int whiteKings, int blackKings,
+                           bool isWhiteActive)
+        {
+            if ((white & ~WhiteFolkMask) > 0)
+                throw new ArgumentOutOfRangeException("white");
+            if ((black & ~BlackFolkMask) > 0)
+                throw new ArgumentOutOfRangeException("black");
+            if (whiteKings < 0 || whiteKings > 7)
+                throw new ArgumentOutOfRangeException("whiteKings");
+            if (blackKings < 0 || blackKings > 7)
+                throw new ArgumentOutOfRangeException("blackKings");
+
+            this.white = white | (((UInt32)whiteKings) << 28);
+            this.black = black | (((UInt32)blackKings));
+
+            if (isWhiteActive)
+                this.white = white | WhiteActiveMask;
+            else
+                this.black = black | BlackActiveMask;
+        }
+
+        //TODO: add [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
+        public UInt32 WhiteFolks { get { return white & WhiteFolkMask; } }
+        public int WhiteKings { get { return (int)((white & WhiteKingMask) >> 28); } }
+        public bool IsWhiteActive { get { return (white & WhiteActiveMask) > 0; } }
+        
+        public UInt32 BlackFolks { get { return black & BlackFolkMask; } }
+        public int BlackKings { get { return (int)((black & BlackKingMask)); } }
+        public bool IsBlackActive { get { return (black & BlackActiveMask) > 0; } }
+
+        public ColorEnum ActivePlayer  { get { return IsWhiteActive ? ColorEnum.White : ColorEnum.Black; } }
+
+        public bool Equals(FastState other)
+        {
+            return this.white == other.white && this.black == other.black;
+        }
+
+        override public bool Equals(object obj)
+        {
+            if (obj is FastState == false)
+                return false;
+
+            return this.Equals((FastState)obj);
+        }
+
+        override public int GetHashCode()
+        {
+            return (int)(white ^ black);
+        }
+
+        #region IState<FastState> Members
+
+        public bool IsTerminal
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public IEnumerable<FastState> GetNextStates()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
+}

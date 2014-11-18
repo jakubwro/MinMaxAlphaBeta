@@ -55,6 +55,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ConsolePresenter.cs" />
+    <Compile Include="FastStateTests.cs" />
     <Compile Include="GameStateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

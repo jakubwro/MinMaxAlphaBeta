@@ -17,7 +17,7 @@ namespace CheckersTests
         [TestMethod]
         public void GameState_InitialState()
         {
-            GameSettings settings = new GameSettings();
+            GameSettings settings = GameSettings.Default;
             Board board = Board.Board8x8;
             Layout layout = board.InitialLayout;
             var game = new GameState(settings, board, layout, ColorEnum.White, 0, 0);
@@ -29,7 +29,7 @@ namespace CheckersTests
         [TestMethod]
         public void GameState_CaptureSequence()
         {
-            GameSettings settings = new GameSettings();
+            GameSettings settings = GameSettings.Default;
             Board board = Board.Board8x8;
             Layout layout = board.InitialLayout;
             layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
@@ -50,7 +50,7 @@ namespace CheckersTests
         [TestMethod]
         public void GameState_CaptureCycle()
         {
-            GameSettings settings = new GameSettings();
+            GameSettings settings = GameSettings.Default;
             Board board = Board.Board8x8;
             Layout layout = board.InitialLayout;
             layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
@@ -72,7 +72,7 @@ namespace CheckersTests
         [TestMethod]
         public void GameState_Search()
         {
-            GameSettings settings = new GameSettings();
+            GameSettings settings = GameSettings.Default;
             Board board = Board.Board8x8;
             var game = new GameState(settings, board);
 
@@ -93,7 +93,7 @@ namespace CheckersTests
         [TestMethod]
         public void GameState_Equality()
         {
-            GameSettings settings = new GameSettings();
+            GameSettings settings = GameSettings.Default;
             Board board = Board.Board8x8;
 
             var game1 = new GameState(settings, board);

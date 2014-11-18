@@ -8,6 +8,8 @@ namespace Checkers
 {
     public class GameSettings
     {
+        public static readonly GameSettings Default = new GameSettings(true, true, true);
+
         private readonly bool mandatoryCaptures = true;
         private readonly bool longestCaptureSequence = true;
         private readonly bool captureBackwards = true;
@@ -15,8 +17,6 @@ namespace Checkers
         public bool MandatoryCaptures { get { return mandatoryCaptures; } }
         public bool LongestCaptureSequence { get { return longestCaptureSequence; } }
         public bool CaptureBackwards { get { return captureBackwards; } }
-
-        public GameSettings() { }
 
         public GameSettings(bool mandatoryCaptures,
                             bool longestCaptureSequence,

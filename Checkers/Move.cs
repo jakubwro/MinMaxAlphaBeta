@@ -2,11 +2,13 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System;
+using MinMaxAlphaBeta;
 
 namespace Checkers
 {
-    using System;
-    using Layout = IImmutableDictionary<Square, Checker>;
+
+using Layout = IImmutableDictionary<Square, Checker>;
 
     //TODO: change property LayoutAfter to Lazy<> to avoid multiple dictionary creation
 
