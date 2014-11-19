@@ -12,28 +12,22 @@ namespace Checkers.FastModel
     [StructLayout(LayoutKind.Explicit, Size = 8)]
     public struct FastState : IState<FastState>, IEquatable<FastState>
     {
-        public static readonly FastState InitialState = new FastState(0x00000fff, 0xfff00000);
-
         static readonly UInt32 WhiteFolkMask = 0x0fffffff;
         static readonly UInt32 WhiteKingMask = 0x70000000;
         static readonly UInt32 WhiteActiveMask = 0x80000000;
 
         static readonly UInt32 BlackFolkMask = 0xfffffff0;
         static readonly UInt32 BlackKingMask = 0x00000007;
-        static readonly UInt32 BlackActiveMask = 0x80000000;
+        static readonly UInt32 BlackActiveMask = 0x00000008;
+
+        public static readonly FastState InitialState = new FastState(0x00000fff, 0xfff00000, 0, 0, true);
 
         [FieldOffset(0)]
         readonly UInt32 white;
         [FieldOffset(4)]
         readonly UInt32 black;
 
-        private FastState(UInt32 white, UInt32 black)
-        {
-            this.white = white;
-            this.black = black;
-        }
-
-        internal FastState(UInt32 white, UInt32 black,
+        public FastState(UInt32 white, UInt32 black,
                            int whiteKings, int blackKings,
                            bool isWhiteActive)
         {
@@ -60,12 +54,12 @@ namespace Checkers.FastModel
         public UInt32 WhiteFolks { get { return white & WhiteFolkMask; } }
         public int WhiteKings { get { return (int)((white & WhiteKingMask) >> 28); } }
         public bool IsWhiteActive { get { return (white & WhiteActiveMask) > 0; } }
-        
+
         public UInt32 BlackFolks { get { return black & BlackFolkMask; } }
         public int BlackKings { get { return (int)((black & BlackKingMask)); } }
         public bool IsBlackActive { get { return (black & BlackActiveMask) > 0; } }
 
-        public ColorEnum ActivePlayer  { get { return IsWhiteActive ? ColorEnum.White : ColorEnum.Black; } }
+        public ColorEnum ActivePlayer { get { return IsWhiteActive ? ColorEnum.White : ColorEnum.Black; } }
 
         public bool Equals(FastState other)
         {
@@ -89,12 +83,27 @@ namespace Checkers.FastModel
 
         public bool IsTerminal
         {
-            get { throw new NotImplementedException(); }
+            get { return GetNextStates().Count() == 0; }
         }
 
         public IEnumerable<FastState> GetNextStates()
         {
-            throw new NotImplementedException();
+            UInt32 folks = IsWhiteActive ? WhiteFolks : BlackFolks;
+
+            for(int r = 0; r < 8; ++r)
+            {
+                UInt32 row = 0xfu << (r << 2);
+                for(int i = 0; i < 4; ++i)
+                {
+                    UInt32 position = 0x1u << ((r<<2)+i);
+                    if ((folks & position) > 0)
+                        MoveCalculator.CalculateMoves(this, row, position);
+                }
+            }
+
+            var res = MoveCalculator.result;
+            MoveCalculator.result = new List<FastState>(10);
+            return res;
         }
 
         #endregion

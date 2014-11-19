@@ -8,34 +8,87 @@ using System.Threading.Tasks;
 
 namespace Checkers.FastModel
 {
-    public class MoveCalculator
+    public static class MoveCalculator
     {
-        public void CalculateMoves(FastState state, UInt32 row, UInt32 position)
+        public static List<FastState> result = new List<FastState>(10);
+
+        public static IEnumerable<FastState> CalculateMoves(FastState state, UInt32 row, UInt32 position)
         {
-            UInt32 white = 0u, black = 0u;
+            UInt32 white = state.WhiteFolks;
+            UInt32 black = state.BlackFolks;
+            int whiteKings = state.WhiteKings;
+            int blackKings = state.BlackKings;
             UInt32 all = white | black;
 
-            var lr = BinaryMasks.LRDiagonals.Single(d => (d & position) > 0);
-            var rl = BinaryMasks.RLDiagonals.Single(d => (d & position) > 0);
+            var lr = BinaryMasks.LeftToRightDiagonals.Single(d => (d & position) > 0);
+            var rl = BinaryMasks.RightToLeftDiagonals.Single(d => (d & position) > 0);
 
-            UInt32 nextRow = row << 4;
-
-            Debug.Assert(nextRow != 0);
-
-            if ((lr & nextRow & all) == 0)
+            if (state.IsWhiteActive)
             {
-                if (nextRow == 0xf0000000u)
-                {
+                UInt32 nextRow = row << 4;
 
+                Debug.Assert(nextRow != 0);
+
+                if ((lr & nextRow & ~all) > 0)
+                {
+                    white = white ^ position;
+                    if (nextRow == 0xf0000000)
+                        whiteKings += 1;
+                    else
+                        white = white ^ (lr & nextRow);
+
+                    result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
+                }
+
+                white = state.WhiteFolks;
+                whiteKings = state.WhiteKings;
+
+                if ((rl & nextRow & ~all) > 0)
+                {
+                    white = white ^ position;
+
+                    if (nextRow == 0xf0000000)
+                        whiteKings += 1;
+                    else
+                        white = white ^ (rl & nextRow);
+
+                     result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
+                }
+            }
+            else
+            {
+                UInt32 prevRow = row >> 4;
+
+                Debug.Assert(prevRow != 0);
+
+                if ((lr & prevRow & ~all) > 0)
+                {
+                    black = black ^ position;
+                    if (prevRow == 0x0000000f)
+                        blackKings += 1;
+                    else
+                        black = black ^ (lr & prevRow);
+
+                     result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
+                }
+
+                black = state.BlackFolks;
+                blackKings = state.BlackKings;
+
+                if ((rl & prevRow & ~all) > 0)
+                {
+                    black = black ^ position;
+
+                    if (prevRow == 0x0000000f)
+                        blackKings += 1;
+                    else
+                        black = black ^ (rl & prevRow);
+
+                     result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
                 }
             }
 
-            if ((rl & nextRow & all) == 0)
-            {
-                //yield state
-            }
-
-
+            return result;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Checkers.FastModel
 {
     public static class BinaryMasks
     {
-        public static List<UInt32> LRDiagonals = new List<uint>()
+        public static UInt32[] RightToLeftDiagonals = new UInt32[]
         {
             0x00000011u,
             0x00001122u,
@@ -19,7 +19,7 @@ namespace Checkers.FastModel
             0x88000000u,
         };
 
-        public static List<UInt32> RLDiagonals = new List<uint>()
+        public static UInt32[] LeftToRightDiagonals = new UInt32[]
         {
             0x00000008u,
             0x00000884u,

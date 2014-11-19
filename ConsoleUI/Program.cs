@@ -7,6 +7,7 @@ using MinMaxAlphaBeta;
 using Checkers;
 using System.Collections;
 using System.Diagnostics;
+using Checkers.FastModel;
 
 namespace ConsoleUI
 {
@@ -14,6 +15,22 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
+            FastState fs = new FastState(0x0f000000, 0x000000f0, 0, 0, true);
+            var fspresenter = new FastStatePresenter();
+            Console.WriteLine(fspresenter.Render(fs));
+
+            foreach (var s in fs.GetNextStates())
+            {
+                Console.WriteLine(fspresenter.Render(s));
+            }
+
+            fs = fs.GetNextStates().First();
+
+            foreach (var s in fs.GetNextStates())
+            {
+                Console.WriteLine(fspresenter.Render(s));
+            }
+
             //while (true)
             //{
             //    var settings = new GameSettings();
