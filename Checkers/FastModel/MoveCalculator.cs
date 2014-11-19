@@ -20,8 +20,26 @@ namespace Checkers.FastModel
             int blackKings = state.BlackKings;
             UInt32 all = white | black;
 
-            var lr = BinaryMasks.LeftToRightDiagonals.Single(d => (d & position) > 0);
-            var rl = BinaryMasks.RightToLeftDiagonals.Single(d => (d & position) > 0);
+            uint lr = 0; //BinaryMasks.LeftToRightDiagonals.Single(d => (d & position) > 0);
+            uint rl = 0; //BinaryMasks.RightToLeftDiagonals.Single(d => (d & position) > 0);
+
+            for (int i = 0; i < BinaryMasks.LeftToRightDiagonals.Length; ++i)
+            {
+                if ((BinaryMasks.LeftToRightDiagonals[i] & position) > 0)
+                {
+                    lr = BinaryMasks.LeftToRightDiagonals[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < BinaryMasks.RightToLeftDiagonals.Length; ++i)
+            {
+                if ((BinaryMasks.RightToLeftDiagonals[i] & position) > 0)
+                {
+                    rl = BinaryMasks.RightToLeftDiagonals[i];
+                    break;
+                }
+            }
+
 
             if (state.IsWhiteActive)
             {
@@ -52,7 +70,7 @@ namespace Checkers.FastModel
                     else
                         white = white ^ (rl & nextRow);
 
-                     result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
+                    result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
                 }
             }
             else
@@ -69,7 +87,7 @@ namespace Checkers.FastModel
                     else
                         black = black ^ (lr & prevRow);
 
-                     result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
+                    result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
                 }
 
                 black = state.BlackFolks;
@@ -84,7 +102,7 @@ namespace Checkers.FastModel
                     else
                         black = black ^ (rl & prevRow);
 
-                     result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
+                    result.Add(new FastState(white, black, whiteKings, blackKings, !state.IsWhiteActive));
                 }
             }
 
