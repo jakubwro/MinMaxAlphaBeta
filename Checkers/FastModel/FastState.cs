@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Immutable;
 
 namespace Checkers.FastModel
 {
@@ -107,5 +108,32 @@ namespace Checkers.FastModel
         }
 
         #endregion
+
+        public GameState ToGameState()
+        {
+            var board = Board.Board8x8;
+
+            var builder = ImmutableDictionary.CreateBuilder<Square, Checker>();
+
+            for (int r = 0; r < 8; ++r)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    UInt32 position = 0x1u << ((r << 2) + i);
+
+                    var column = 'A' + ((i << 1) + (r & 0x1));
+                    var row = (r + 1);
+                    Square s = board.Squares.Single(sq => sq.Column == column && sq.Row == row);
+                    
+                    if ((WhiteFolks & position) > 0)
+                        builder.Add(s, Checker.WhiteFolk);
+                    if((BlackFolks & position) > 0)
+                        builder.Add(s, Checker.BlackFolk);
+                }
+            }
+
+            return new GameState(GameSettings.Default, board, builder.ToImmutable(),
+                IsWhiteActive ? ColorEnum.White : ColorEnum.Black, WhiteKings, BlackKings);
+        }
     }
 }

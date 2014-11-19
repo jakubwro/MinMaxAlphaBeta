@@ -20,8 +20,8 @@ namespace Checkers.FastModel
             int blackKings = state.BlackKings;
             UInt32 all = white | black;
 
-            uint lr = 0; //BinaryMasks.LeftToRightDiagonals.Single(d => (d & position) > 0);
-            uint rl = 0; //BinaryMasks.RightToLeftDiagonals.Single(d => (d & position) > 0);
+            uint lr = 0;
+            uint rl = 0;
 
             for (int i = 0; i < BinaryMasks.LeftToRightDiagonals.Length; ++i)
             {

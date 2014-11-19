@@ -9,6 +9,8 @@ namespace Checkers
 {
     using Diagonal = IEnumerable<Square>;
     using Layout = IImmutableDictionary<Square, Checker>;
+using Checkers.FastModel;
+    using System.Diagnostics;
 
     public class GameState : IState<GameState>
     {
@@ -132,6 +134,36 @@ namespace Checkers
         {
             return from move in AvailableMoves
                    select MakeMove(move);
+        }
+
+        public FastState ToFastState()
+        {
+            Debug.Assert(this.board == Board.Board8x8);
+            UInt32 white = 0;
+            UInt32 black = 0;
+
+            for (int r = 0; r < 8; ++r)
+            {
+                for (int i = 0; i < 4; ++i)
+                {
+                    
+                    UInt32 position = 0x1u << ((r << 2) + i);
+                    //string s = string.Format("{0}{1}", (char)('A' + (i << 1) + (r & 0x1)), r + 1);
+                    var column = 'A' + ((i << 1) + (r & 0x1));
+                    var row = (r + 1);
+                    Square s = this.board.Squares.Single(sq => sq.Column == column && sq.Row == row);
+                    Checker checker;
+                    if (this.layout.TryGetValue(s, out checker))
+                    {
+                        if (checker.Color == ColorEnum.White)
+                            white |= position;
+                        else
+                            black |= position;
+                    }
+                }
+            }
+
+            return new FastState(white, black, this.whiteScore, this.blackScore, this.activePlayer == ColorEnum.White);
         }
 
         public bool Equals(GameState other)

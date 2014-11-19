@@ -18,12 +18,5 @@ namespace Checkers.Rules
             new Rule[] { FolkMoveRule.FolkMove, FolkCaptureRule.FolkCapture });
 
         public abstract IEnumerable<Move> Execute(GameState game, Square square);
-
-        internal Layout GetNextState(Layout layout, IEnumerable<Square> squares)
-        {
-            return layout.Add(squares.Third(), layout[squares.First()])
-                         .Remove(squares.First())
-                         .Remove(squares.Second());
-        }
     }
 }

@@ -15,21 +15,16 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            FastState fs = new FastState(0x0f000000, 0x000000f0, 0, 0, true);
+            FastState fs = FastState.InitialState;
             var fspresenter = new FastStatePresenter();
             Console.WriteLine(fspresenter.Render(fs));
 
-            foreach (var s in fs.GetNextStates())
+            while (fs.GetNextStates().Count() > 0)
             {
-                Console.WriteLine(fspresenter.Render(s));
+                fs = fs.GetNextStates().Random();
+                Console.WriteLine(fspresenter.Render(fs));
             }
-
-            fs = fs.GetNextStates().First();
-
-            foreach (var s in fs.GetNextStates())
-            {
-                Console.WriteLine(fspresenter.Render(s));
-            }
+            Console.WriteLine(fspresenter.Render(fs));
 
             //while (true)
             //{

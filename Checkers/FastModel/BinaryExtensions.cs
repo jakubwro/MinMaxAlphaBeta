@@ -71,16 +71,5 @@ namespace Checkers.FastModel
             Debug.Assert(position >= 0 && position < 32);
             return (v & (0x1ul << position)) > 0;
         }
-
-        //public void SetNyble(this UInt32 v, byte nyble, int position)
-        //{
-        //    if (nyble > 0x0f)
-        //        throw new ArgumentException()
-        //}
-
-        //public byte GetNyble(this UInt32 v, int position)
-        //{
-            
-        //}
     }
 }
