@@ -10,127 +10,125 @@ namespace Checkers.FastModel
 {
     public class CaptureCalculator
     {
-        public IEnumerable<FastState> CalculateCaptures(FastState state, UInt32 row, UInt32 position)
+        public IEnumerable<FastState> CalculateCaptures(FastState state, int rowNo, int colNo)
         {
             UInt32 white = state.WhiteFolks;
             UInt32 black = state.BlackFolks;
             UInt32 all = white | black;
 
-            var lr = BinaryMasks.LeftToRightDiagonals.Single(d => (d & position) > 0);
-            var rl = BinaryMasks.RightToLeftDiagonals.Single(d => (d & position) > 0);
+            UInt32 row = 0xfu << (rowNo << 2);
+            int squareNo = (rowNo << 2) + colNo;
+            UInt32 position = 0x1u << squareNo;
+
+            var lr = BinaryMasks.LeftToRightDiags[squareNo];
+            var rl = BinaryMasks.RightToLeftDiags[squareNo];
 
             UInt32 nextRow = row << 4;
             UInt32 nextNextRow = row << 8;
             UInt32 prevRow = row >> 4;
             UInt32 prevPrevRow = row >> 8;
 
-            if (state.IsWhiteActive)
+
+            yield return default(FastState);
+        }
+
+        public  IEnumerable<FastState> GetCaptures(UInt32 white, UInt32 black, int rowNo, int colNo)
+        {
+            //UInt32 all = white | black;
+            UInt32 row = 0xfu << (rowNo << 2);
+            int squareNo = (rowNo << 2) + colNo;
+            UInt32 position = 0x1u << squareNo;
+
+            UInt32 nextRow = row << 4;
+            UInt32 nextNextRow = row << 8;
+            UInt32 prevRow = row >> 4;
+            UInt32 prevPrevRow = row >> 8;
+
+            var lr = BinaryMasks.LeftToRightDiags[squareNo];
+            var rl = BinaryMasks.RightToLeftDiags[squareNo];
+
+            UInt32 captured = 0, destination = 0;
+
+            UInt32 lastRow = (white & position) > 0 ? 0xf0000000 : 0x0000000f;
+
+            //1
+            captured = lr & nextRow;
+            destination = lr & nextNextRow;
+            if (IsLegalCapture(white, black, position, captured, destination))
             {
-                if ((lr & nextRow & black) > 0 && (lr & nextNextRow & ~all) > 0)
+                //foreach (var s in GetCaptures(white & ~position & ~capture,
+                //                              black & ~position & ~capture, )
+                //{
+
+                //}
+            }
+
+            //2
+            captured = lr & prevRow;
+            destination = lr & prevPrevRow;
+            if (IsLegalCapture(white, black, position, captured, destination))
+            {
+                if (nextNextRow == lastRow)
                 {
-                    FastState newState = new FastState(white ^ ~position ^ (lr & nextNextRow),
-                                                       black ^ ~(lr & nextRow),
-                                                       state.WhiteKings,
-                                                       state.BlackKings,
-                                                       !state.IsWhiteActive);
 
-                    if (nextNextRow == 0xf0000000)
-                    {
-                        FastState newPromotion = new FastState(white ^ ~position,
-                                                               black ^ ~(lr & nextRow),
-                                                               state.WhiteKings + 1,
-                                                               state.BlackKings,
-                                                               !state.IsWhiteActive);
-                        yield return newPromotion;
-                    }
-                    else
-                    {
-                        yield return newState;
-                    }
-
-                    foreach (var s in CalculateCaptures(newState, nextNextRow , (lr & nextNextRow)))
-                        yield return s;
-
-                }
-
-                if ((lr & prevRow & ~black) == 0 && (lr & prevPrevRow & all) == 0)
-                {
-                    FastState newState = new FastState(white ^ ~position ^ (lr & prevPrevRow),
-                                   black ^ ~(lr & prevRow),
-                                   state.WhiteKings,
-                                   state.BlackKings,
-                                   !state.IsWhiteActive);
-
-                    if (prevPrevRow == 0xf0000000)
-                    {
-                        FastState newPromotion = new FastState(white ^ ~position,
-                                                               black ^ ~(lr & prevRow),
-                                                               state.WhiteKings + 1,
-                                                               state.BlackKings,
-                                                               !state.IsWhiteActive);
-                        yield return newPromotion;
-                    }
-                    else
-                    {
-                        yield return newState;
-                    }
-
-                    foreach (var s in CalculateCaptures(newState, prevPrevRow, (lr & prevPrevRow)))
-                        yield return s;
-                }
-
-                if ((rl & nextRow & ~black) == 0 && (rl & nextNextRow & all) == 0)
-                {
-                    FastState newState = new FastState(white ^ ~position ^ (rl & nextNextRow),
-                                                       black ^ ~(rl & nextRow),
-                                                       state.WhiteKings,
-                                                       state.BlackKings,
-                                                       !state.IsWhiteActive);
-
-                    if (nextNextRow == 0xf0000000)
-                    {
-                        FastState newPromotion = new FastState(white ^ ~position,
-                                                               black ^ ~(rl & nextRow),
-                                                               state.WhiteKings + 1,
-                                                               state.BlackKings,
-                                                               !state.IsWhiteActive);
-                        yield return newPromotion;
-                    }
-                    else
-                    {
-                        yield return newState;
-                    }
-
-                    foreach (var s in CalculateCaptures(newState, nextNextRow, (rl & nextNextRow)))
-                        yield return s;
-                }
-
-                if ((rl & prevRow & ~black) == 0 && (rl & prevPrevRow & all) == 0)
-                {
-                    FastState newState = new FastState(white ^ ~position ^ (rl & prevPrevRow),
-                                   black ^ ~(rl & prevRow),
-                                   state.WhiteKings,
-                                   state.BlackKings,
-                                   !state.IsWhiteActive);
-
-                    if (prevPrevRow == 0xf0000000)
-                    {
-                        FastState newPromotion = new FastState(white ^ ~position,
-                                                               black ^ ~(rl & prevRow),
-                                                               state.WhiteKings + 1,
-                                                               state.BlackKings,
-                                                               !state.IsWhiteActive);
-                        yield return newPromotion;
-                    }
-                    else
-                    {
-                        yield return newState;
-                    }
-
-                    foreach (var s in CalculateCaptures(newState, prevPrevRow, (rl & prevPrevRow)))
-                        yield return s;
                 }
             }
+
+            //3
+            captured = rl & nextRow;
+            destination = rl & nextNextRow;
+            if (IsLegalCapture(white, black, position, captured, destination))
+            {
+                if (nextNextRow == lastRow)
+                {
+
+                }
+            }
+
+            //4
+            captured = rl & prevRow;
+            destination = rl & prevPrevRow;
+            if (IsLegalCapture(white, black, position, captured, destination))
+            {
+                if (nextNextRow == lastRow)
+                {
+
+                }
+            }
+
+            yield return default(FastState);
+        }
+
+        private bool IsLegalCapture(UInt32 white, UInt32 black, UInt32 position, UInt32 captured, UInt32 destination)
+        {
+            Debug.Assert(((white & position) ^ (black & position)) == 0);
+
+            UInt32 all = white | black;
+
+            if ((all & destination) > 0)
+                return false;   // Destination square is taken
+
+            //There is enemy next to current
+            if ((white & position) > 0)
+            {
+                if ((black & captured) == 0)
+                {
+                    return false;
+                }
+            }
+            else if ((black & position) > 0)
+            {
+                if ((white & captured) == 0)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
+
+            return true;
         }
     }
 }

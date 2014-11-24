@@ -12,7 +12,7 @@ namespace Checkers.FastModel
     {
         public static List<FastState> result = new List<FastState>(10);
 
-        public static IEnumerable<FastState> CalculateMoves(FastState state, UInt32 row, UInt32 position)
+        public static IEnumerable<FastState> CalculateMoves(FastState state, int rowNo, int colNo)
         {
             UInt32 white = state.WhiteFolks;
             UInt32 black = state.BlackFolks;
@@ -20,26 +20,12 @@ namespace Checkers.FastModel
             int blackKings = state.BlackKings;
             UInt32 all = white | black;
 
-            uint lr = 0;
-            uint rl = 0;
+            UInt32 row = 0xfu << (rowNo << 2);
+            int squareNo = (rowNo << 2) + colNo;
+            UInt32 position = 0x1u << squareNo;
 
-            for (int i = 0; i < BinaryMasks.LeftToRightDiagonals.Length; ++i)
-            {
-                if ((BinaryMasks.LeftToRightDiagonals[i] & position) > 0)
-                {
-                    lr = BinaryMasks.LeftToRightDiagonals[i];
-                    break;
-                }
-            }
-            for (int i = 0; i < BinaryMasks.RightToLeftDiagonals.Length; ++i)
-            {
-                if ((BinaryMasks.RightToLeftDiagonals[i] & position) > 0)
-                {
-                    rl = BinaryMasks.RightToLeftDiagonals[i];
-                    break;
-                }
-            }
-
+            uint lr = BinaryMasks.LeftToRightDiags[squareNo];
+            uint rl = BinaryMasks.RightToLeftDiags[squareNo];
 
             if (state.IsWhiteActive)
             {

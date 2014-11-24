@@ -93,12 +93,11 @@ namespace Checkers.FastModel
 
             for(int r = 0; r < 8; ++r)
             {
-                UInt32 row = 0xfu << (r << 2);
                 for(int i = 0; i < 4; ++i)
                 {
-                    UInt32 position = 0x1u << ((r<<2)+i);
+                    UInt32 position = 0x1u << ((r << 2) + i);
                     if ((folks & position) > 0)
-                        MoveCalculator.CalculateMoves(this, row, position);
+                        MoveCalculator.CalculateMoves(this, r, i);
                 }
             }
 
