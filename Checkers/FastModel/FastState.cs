@@ -89,7 +89,10 @@ namespace Checkers.FastModel
 
         public IEnumerable<FastState> GetNextStates()
         {
+
             UInt32 folks = IsWhiteActive ? WhiteFolks : BlackFolks;
+
+            List<CaptureState> captures = new List<CaptureState>();
 
             for(int r = 0; r < 8; ++r)
             {
@@ -97,9 +100,14 @@ namespace Checkers.FastModel
                 {
                     UInt32 position = 0x1u << ((r << 2) + i);
                     if ((folks & position) > 0)
+                    {
                         MoveCalculator.CalculateMoves(this, r, i);
+
+                        captures.AddRange(CaptureCalculator.CalculateCaptures(this, r, i));
+                    }           
                 }
             }
+
 
             var res = MoveCalculator.result;
             MoveCalculator.result = new List<FastState>(10);

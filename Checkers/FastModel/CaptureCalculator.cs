@@ -8,100 +8,96 @@ using System.Threading.Tasks;
 
 namespace Checkers.FastModel
 {
-    public class CaptureCalculator
+    public static class CaptureCalculator
     {
-        public IEnumerable<FastState> CalculateCaptures(FastState state, int rowNo, int colNo)
+        public static IEnumerable<CaptureState> CalculateCaptures(FastState state, int rowNo, int colNo)
         {
-            UInt32 white = state.WhiteFolks;
-            UInt32 black = state.BlackFolks;
-            UInt32 all = white | black;
-
-            UInt32 row = 0xfu << (rowNo << 2);
-            int squareNo = (rowNo << 2) + colNo;
-            UInt32 position = 0x1u << squareNo;
-
-            var lr = BinaryMasks.LeftToRightDiags[squareNo];
-            var rl = BinaryMasks.RightToLeftDiags[squareNo];
-
-            UInt32 nextRow = row << 4;
-            UInt32 nextNextRow = row << 8;
-            UInt32 prevRow = row >> 4;
-            UInt32 prevPrevRow = row >> 8;
-
-
-            yield return default(FastState);
+            return GetCaptures(new CaptureState(state.WhiteFolks, state.BlackFolks, rowNo, colNo));
         }
 
-        public  IEnumerable<FastState> GetCaptures(UInt32 white, UInt32 black, int rowNo, int colNo)
+        public static IEnumerable<CaptureState> GetCaptures(CaptureState captureState)
         {
-            //UInt32 all = white | black;
-            UInt32 row = 0xfu << (rowNo << 2);
-            int squareNo = (rowNo << 2) + colNo;
-            UInt32 position = 0x1u << squareNo;
+            UInt32 white = captureState.White;
+            UInt32 black = captureState.Black;
 
-            UInt32 nextRow = row << 4;
-            UInt32 nextNextRow = row << 8;
-            UInt32 prevRow = row >> 4;
-            UInt32 prevPrevRow = row >> 8;
-
-            var lr = BinaryMasks.LeftToRightDiags[squareNo];
-            var rl = BinaryMasks.RightToLeftDiags[squareNo];
+            var lr = BinaryMasks.LeftToRightDiags[captureState.SquareNo];
+            var rl = BinaryMasks.RightToLeftDiags[captureState.SquareNo];
 
             UInt32 captured = 0, destination = 0;
-
-            UInt32 lastRow = (white & position) > 0 ? 0xf0000000 : 0x0000000f;
-
+            UInt32 position = captureState.Position;
+            
             //1
-            captured = lr & nextRow;
-            destination = lr & nextNextRow;
+            captured = lr & captureState.NextRow;
+            destination = lr & captureState.NextNextRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                //foreach (var s in GetCaptures(white & ~position & ~capture,
-                //                              black & ~position & ~capture, )
-                //{
+                var cs = new CaptureState((white & ~position & ~captured) | destination,
+                                          black & ~position & ~captured,
+                                          captureState.RowNo + 2,
+                                          captureState.ColNo + 1);
+                yield return cs;
 
-                //}
+                foreach (var s in GetCaptures(cs))
+                    yield return s;
             }
 
             //2
-            captured = lr & prevRow;
-            destination = lr & prevPrevRow;
+            captured = lr & captureState.PrevRow;
+            destination = lr & captureState.PrevPrevRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                if (nextNextRow == lastRow)
-                {
+                var cs = new CaptureState((white & ~position & ~captured) | destination,
+                                          black & ~position & ~captured,
+                                          captureState.RowNo - 2,
+                                          captureState.ColNo - 1);
+                yield return cs;
 
-                }
+                foreach (var s in GetCaptures(cs))
+                    yield return s;
+
             }
 
             //3
-            captured = rl & nextRow;
-            destination = rl & nextNextRow;
+            captured = rl & captureState.NextRow;
+            destination = rl & captureState.NextNextRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                if (nextNextRow == lastRow)
-                {
+                var cs = new CaptureState((white & ~position & ~captured) | destination,
+                                          black & ~position & ~captured,
+                                          captureState.RowNo + 2,
+                                          captureState.ColNo - 1);
 
-                }
+                yield return cs;
+
+                foreach (var s in GetCaptures(cs))
+                    yield return s;
             }
 
             //4
-            captured = rl & prevRow;
-            destination = rl & prevPrevRow;
+            captured = rl & captureState.PrevRow;
+            destination = rl & captureState.PrevPrevRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                if (nextNextRow == lastRow)
-                {
+                var cs = new CaptureState((white & ~position & ~captured) | destination,
+                                          black & ~position & ~captured,
+                                          captureState.RowNo - 2,
+                                          captureState.ColNo + 1);
 
-                }
+                yield return cs;
+
+                foreach (var s in GetCaptures(cs))
+                    yield return s;
             }
 
-            yield return default(FastState);
+
         }
 
-        private bool IsLegalCapture(UInt32 white, UInt32 black, UInt32 position, UInt32 captured, UInt32 destination)
+        private static bool IsLegalCapture(UInt32 white, UInt32 black, UInt32 position, UInt32 captured, UInt32 destination)
         {
             Debug.Assert(((white & position) ^ (black & position)) == 0);
+
+            if (destination == 0)
+                return false; //out of board
 
             UInt32 all = white | black;
 

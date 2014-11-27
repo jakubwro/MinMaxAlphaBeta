@@ -46,6 +46,7 @@
     <Compile Include="FastModel\BinaryMasks.cs" />
     <Compile Include="FastModel\CaptureCalculator.cs" />
     <Compile Include="FastModel\MoveCalculator.cs" />
+    <Compile Include="FastModel\CaptureState.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="BoardExtensions.cs" />
