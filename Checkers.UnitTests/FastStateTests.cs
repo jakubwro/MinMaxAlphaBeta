@@ -72,7 +72,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void GameState_CaptureCycle()
+        public void FastState_CaptureCycle()
         {
             GameSettings settings = GameSettings.Default;
             Board board = Board.Board8x8;
@@ -90,6 +90,27 @@ namespace UnitTests
             var moves = fastState.GetNextStates().ToList();
 
             Assert.IsTrue(moves.Count() == 2);
+        }
+
+        [TestMethod]
+        public void FastState_CaptureSequence()
+        {
+            GameSettings settings = GameSettings.Default;
+            Board board = Board.Board8x8;
+            Layout layout = board.InitialLayout;
+            layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
+            layout = layout.Remove(board.Squares.Skip(25).First());
+            layout = layout.Remove(board.Squares.Skip(27).First());
+
+            var game = new GameState(settings, board, layout, ColorEnum.White, 0, 0);
+            var fastState = game.ToFastState();
+
+            Assert.IsTrue(fastState.GetNextStates().Count() == 1);
+
+            fastState = fastState.GetNextStates().First();
+
+            Assert.IsTrue(fastState.GetNextStates().Count() == 1);
+
         }
     }
 }
