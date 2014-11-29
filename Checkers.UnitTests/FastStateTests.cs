@@ -19,7 +19,7 @@ namespace UnitTests
         [TestMethod]
         public void FastState_InitialState()
         {
-            for (int i = 0; i < 6000000; ++i)
+            //for (int i = 0; i < 600000; ++i)
             {
                 FastState state = FastState.InitialState;
 
@@ -110,6 +110,16 @@ namespace UnitTests
             fastState = fastState.GetNextStates().First();
 
             Assert.IsTrue(fastState.GetNextStates().Count() == 1);
+
+        }
+
+
+        [TestMethod]
+        public void FastState_CapturePromotion()
+        {
+            var fastState = new FastState(2147516394 & 0x0fffffff, 3728179200 & 0xfffffff0, 0, 0, true);
+
+            var moves = fastState.GetNextStates();
 
         }
     }

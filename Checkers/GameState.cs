@@ -79,7 +79,7 @@ using Checkers.FastModel;
         }
 
         ///Constructor for tests
-        internal GameState(GameSettings settings, Board board, Layout layout, ColorEnum activePlayer, int whiteScore, int blackScore)
+        public GameState(GameSettings settings, Board board, Layout layout, ColorEnum activePlayer, int whiteScore, int blackScore)
         {
             this.settings = settings;
             this.board = board;
@@ -149,7 +149,7 @@ using Checkers.FastModel;
                     
                     UInt32 position = 0x1u << ((r << 2) + i);
                     //string s = string.Format("{0}{1}", (char)('A' + (i << 1) + (r & 0x1)), r + 1);
-                    var column = 'A' + ((i << 1) + (r & 0x1));
+                    var column = 'H' - ((i << 1) + 1 - (r & 0x1));
                     var row = (r + 1);
                     Square s = this.board.Squares.Single(sq => sq.Column == column && sq.Row == row);
                     Checker checker;

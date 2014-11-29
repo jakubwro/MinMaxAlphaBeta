@@ -46,5 +46,8 @@ namespace Checkers.FastModel
         public UInt32 PrevRow { get { return Row >> 4; } }
         public UInt32 PrevPrevRow { get { return Row >> 8; } }
 
+        public bool IsWhiteActive { get { return (White & Position) > 0; } }
+        public bool IsBlackActive { get { return (Black & Position) > 0; } }
+
     }
 }

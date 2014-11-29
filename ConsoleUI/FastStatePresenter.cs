@@ -51,6 +51,11 @@ namespace ConsoleUI
                 stringBuilder.Append(string.Format(" {0}  ", (char)('A' + k)));
             stringBuilder.AppendLine();
 
+            stringBuilder.AppendFormat("White points: {0}", state.WhiteKings);
+            stringBuilder.AppendLine();
+            stringBuilder.AppendFormat("Black points: {0}", state.BlackKings);
+            stringBuilder.AppendLine();
+
             return stringBuilder.ToString();
         }
 

@@ -11,20 +11,51 @@ using Checkers.FastModel;
 
 namespace ConsoleUI
 {
+    using Layout = System.Collections.Immutable.IImmutableDictionary<Square, Checker>;
+
     class Program
     {
         static void Main(string[] args)
         {
-            FastState fs = FastState.InitialState;
+            var presenter = new ConsolePresenter();
             var fspresenter = new FastStatePresenter();
-            Console.WriteLine(fspresenter.Render(fs));
+            Board board = Board.Board8x8;
+            Layout layout = board.InitialLayout;
+            layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
+            layout = layout.Remove(board.Squares.Skip(25).First());
+            layout = layout.Remove(board.Squares.Skip(27).First());
 
-            while (fs.GetNextStates().Count() > 0)
-            {
-                fs = fs.GetNextStates().Random();
-                Console.WriteLine(fspresenter.Render(fs));
-            }
-            Console.WriteLine(fspresenter.Render(fs));
+            var g = new GameState(GameSettings.Default, board, layout, ColorEnum.White, 0, 0);
+            Console.WriteLine(presenter.Render(g));
+            var fastState = g.ToFastState();
+            Console.WriteLine(fspresenter.Render(fastState));
+
+            var gg = fastState.ToGameState();
+            Console.WriteLine(presenter.Render(gg));
+            //FastState fs = FastState.InitialState;
+            //var fspresenter = new FastStatePresenter();
+            //Console.WriteLine(fspresenter.Render(fs));
+
+            //var movs = fs.GetNextStates().ToList();
+
+            //while (movs.Count > 0)
+            //{
+            //    fs = movs.Random();
+            //    Console.WriteLine(fspresenter.Render(fs));
+            //    movs = fs.GetNextStates().ToList();
+
+            //}
+            //Console.WriteLine(fspresenter.Render(fs));
+
+
+            //var fastState = new FastState(2147516394 & 0x0fffffff, 3728179200 & 0xfffffff0, 0, 0, true);
+
+            //Console.WriteLine(fspresenter.Render(fastState));
+            //var moves = fastState.GetNextStates().ToList();
+
+            //foreach(var m in moves)
+            //    Console.WriteLine(fspresenter.Render(m));
+
 
             //while (true)
             //{
@@ -47,7 +78,7 @@ namespace ConsoleUI
 
             var gauge = new GameStateGauge(ColorEnum.White);
             MinMaxAlphaBeta<GameState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<GameState, int>(gauge);
-            var presenter = new ConsolePresenter();
+            //var presenter = new ConsolePresenter();
 
             IPlayer<GameState> minMaxAlphaBetaPlayer = new MinMaxPlayer<GameState>(minMaxAlphaBeta);
             IPlayer<GameState> randomPlayer = new RandomPlayer<GameState>();

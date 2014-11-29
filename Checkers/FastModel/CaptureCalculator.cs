@@ -12,7 +12,12 @@ namespace Checkers.FastModel
     {
         public static IEnumerable<CaptureState> CalculateCaptures(FastState state, int rowNo, int colNo)
         {
-            return GetCaptures(new CaptureState(state.WhiteFolks, state.BlackFolks, rowNo, colNo));
+            var captures = GetCaptures(new CaptureState(state.WhiteFolks, state.BlackFolks, rowNo, colNo));
+
+            //TODO: filter
+            var list = captures.ToList();
+
+            return list;
         }
 
         public static IEnumerable<CaptureState> GetCaptures(CaptureState captureState)
@@ -31,8 +36,8 @@ namespace Checkers.FastModel
             destination = lr & captureState.NextNextRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                var cs = new CaptureState((white & ~position & ~captured) | destination,
-                                          black & ~position & ~captured,
+                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
                                           captureState.RowNo + 2,
                                           captureState.ColNo + 1);
                 yield return cs;
@@ -46,8 +51,8 @@ namespace Checkers.FastModel
             destination = lr & captureState.PrevPrevRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                var cs = new CaptureState((white & ~position & ~captured) | destination,
-                                          black & ~position & ~captured,
+                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
                                           captureState.RowNo - 2,
                                           captureState.ColNo - 1);
                 yield return cs;
@@ -62,8 +67,8 @@ namespace Checkers.FastModel
             destination = rl & captureState.NextNextRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                var cs = new CaptureState((white & ~position & ~captured) | destination,
-                                          black & ~position & ~captured,
+                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
                                           captureState.RowNo + 2,
                                           captureState.ColNo - 1);
 
@@ -78,8 +83,8 @@ namespace Checkers.FastModel
             destination = rl & captureState.PrevPrevRow;
             if (IsLegalCapture(white, black, position, captured, destination))
             {
-                var cs = new CaptureState((white & ~position & ~captured) | destination,
-                                          black & ~position & ~captured,
+                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
                                           captureState.RowNo - 2,
                                           captureState.ColNo + 1);
 
@@ -94,7 +99,7 @@ namespace Checkers.FastModel
 
         private static bool IsLegalCapture(UInt32 white, UInt32 black, UInt32 position, UInt32 captured, UInt32 destination)
         {
-            Debug.Assert(((white & position) ^ (black & position)) == 0);
+            Debug.Assert(((white & position) ^ (black & position)) != 0);
 
             if (destination == 0)
                 return false; //out of board

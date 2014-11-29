@@ -45,9 +45,9 @@ namespace Checkers.FastModel
             this.black = black | (((UInt32)blackKings));
 
             if (isWhiteActive)
-                this.white = white | WhiteActiveMask;
+                this.white = this.white | WhiteActiveMask;
             else
-                this.black = black | BlackActiveMask;
+                this.black = this.black | BlackActiveMask;
         }
 
         //TODO: add [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -104,14 +104,58 @@ namespace Checkers.FastModel
                         MoveCalculator.CalculateMoves(this, r, i);
 
                         captures.AddRange(CaptureCalculator.CalculateCaptures(this, r, i));
-                    }           
+                    }
                 }
             }
 
+            var whiteKings = this.WhiteKings;
+            var blackKings = this.BlackKings;
+            var isWhiteNext = this.ActivePlayer == ColorEnum.Black;
+            
+            var captureRes = new List<FastState>();
+            
+            if (captures.Count == 0)
+            {
+                var res = MoveCalculator.result;
+                MoveCalculator.result = new List<FastState>(10);
 
-            var res = MoveCalculator.result;
+                res.AddRange(captureRes);
+                return res;
+            }
+
+            if (this.IsWhiteActive)
+            {
+                int bitOpt = captures.Min(c => c.Black.CountBits());
+                captures = captures.Where(c => c.Black.CountBits() == bitOpt).ToList();
+            }
+            else
+            {
+                int bitOpt = captures.Min(c => c.White.CountBits());
+                captures = captures.Where(c => c.White.CountBits() == bitOpt).ToList();
+            }
+
+            foreach(var c in captures)
+            {
+                var wk = whiteKings;
+                var bk = blackKings;
+                if (this.IsWhiteActive)
+                {
+                    if ((c.White & c.LastRow) > 0)
+                        wk += 1;
+                }
+                else
+                {
+                    if ((c.Black & c.LastRow) > 0)
+                        bk += 1;
+                }
+
+                var cap = new FastState(c.White & WhiteFolkMask, c.Black & BlackFolkMask, wk, bk, isWhiteNext);
+                captureRes.Add(cap);
+            }
+
             MoveCalculator.result = new List<FastState>(10);
-            return res;
+            return captureRes;
+
         }
 
         #endregion
@@ -128,7 +172,7 @@ namespace Checkers.FastModel
                 {
                     UInt32 position = 0x1u << ((r << 2) + i);
 
-                    var column = 'A' + ((i << 1) + (r & 0x1));
+                    var column = 'H' - ((i << 1) + 1 - (r & 0x1));
                     var row = (r + 1);
                     Square s = board.Squares.Single(sq => sq.Column == column && sq.Row == row);
                     
