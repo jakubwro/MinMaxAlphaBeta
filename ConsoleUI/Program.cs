@@ -17,21 +17,6 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            var presenter = new ConsolePresenter();
-            var fspresenter = new FastStatePresenter();
-            Board board = Board.Board8x8;
-            Layout layout = board.InitialLayout;
-            layout = layout.Add(board.Squares.Skip(12).First(), Checker.BlackFolk);
-            layout = layout.Remove(board.Squares.Skip(25).First());
-            layout = layout.Remove(board.Squares.Skip(27).First());
-
-            var g = new GameState(GameSettings.Default, board, layout, ColorEnum.White, 0, 0);
-            Console.WriteLine(presenter.Render(g));
-            var fastState = g.ToFastState();
-            Console.WriteLine(fspresenter.Render(fastState));
-
-            var gg = fastState.ToGameState();
-            Console.WriteLine(presenter.Render(gg));
             //FastState fs = FastState.InitialState;
             //var fspresenter = new FastStatePresenter();
             //Console.WriteLine(fspresenter.Render(fs));
@@ -57,38 +42,19 @@ namespace ConsoleUI
             //    Console.WriteLine(fspresenter.Render(m));
 
 
-            //while (true)
-            //{
-            //    var settings = new GameSettings();
-            //    ConsolePresenter presenter = new ConsolePresenter();
-            //    GameState game = new GameState(settings, Board.Board8x8);
+            var gauge = new BinaryStateGauge(ColorEnum.White);
+            MinMaxAlphaBeta<FastState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<FastState, int>(gauge);
+            var presenter = new ConsolePresenter();
 
-            //    Console.WriteLine(presenter.Render(game));
-
-            //    var moves = game.AvailableMoves.ToList();
-            //    while (moves.Count() > 0)
-            //    {
-            //        game = game.MakeMove(moves.Random());
-            //        moves = game.AvailableMoves.ToList();
-            //        Console.WriteLine(presenter.Render(game));
-            //    }
-
-            //    Console.WriteLine(presenter.Render(game));
-            //}
-
-            var gauge = new GameStateGauge(ColorEnum.White);
-            MinMaxAlphaBeta<GameState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<GameState, int>(gauge);
-            //var presenter = new ConsolePresenter();
-
-            IPlayer<GameState> minMaxAlphaBetaPlayer = new MinMaxPlayer<GameState>(minMaxAlphaBeta);
+            IPlayer<GameState> minMaxAlphaBetaPlayer = new FastMinMaxPlayer(minMaxAlphaBeta);
             IPlayer<GameState> randomPlayer = new RandomPlayer<GameState>();
             IPlayer<GameState> consolePlayer = new ConsolePlayer<GameState>(presenter);
 
             var settings = new GameSettings(true, true, false);
-            GameState gameState = new GameState(settings, Board.Board6x6);
+            GameState gameState = new GameState(settings, Board.Board8x8);
             try
             {
-                Game<GameState> game = new Game<GameState>(minMaxAlphaBetaPlayer, randomPlayer, presenter);
+                Game<GameState> game = new Game<GameState>(minMaxAlphaBetaPlayer, consolePlayer, presenter);
 
                 IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 

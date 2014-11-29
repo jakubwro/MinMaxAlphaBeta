@@ -9,9 +9,32 @@ namespace Checkers.FastModel
 {
     public class BinaryStateGauge : Gauge<FastState, int>
     {
+        private ColorEnum colorEnum;
+
+        public BinaryStateGauge(ColorEnum colorEnum)
+        {
+            this.colorEnum = colorEnum;
+        }
         protected override int ComputeValue(FastState state)
         {
-            return state.WhiteKings - state.BlackKings;
+            if (this.colorEnum == ColorEnum.White)
+            {
+                if (state.WhiteKings <= state.BlackKings)
+                    return 0;
+
+                if (state.WhiteKings - state.BlackKings > 5)
+                    return 5;
+
+                return state.WhiteKings - state.BlackKings;
+            }
+
+            if (state.BlackKings <= state.WhiteKings)
+                return 0;
+
+            if (state.BlackKings - state.WhiteKings > 5)
+                return 5;
+
+            return state.BlackKings - state.WhiteKings;
         }
     }
 }

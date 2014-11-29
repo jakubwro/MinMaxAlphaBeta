@@ -52,6 +52,7 @@
     <Compile Include="GameStateGauge.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="IPresenter.cs" />
+    <Compile Include="FastMinMaxPlayer.cs" />
     <Compile Include="MinMaxPlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
