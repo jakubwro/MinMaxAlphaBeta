@@ -19,6 +19,14 @@ namespace ConsoleUI
 
         protected override int ComputeValue(GameState state)
         {
+            if (state.WhiteScore == state.BlackScore)
+                return 0;
+
+            if (this.playerColor == ColorEnum.White)
+                return state.WhiteScore > state.BlackScore ? 1 : -1;
+
+            return state.BlackScore > state.WhiteScore ? 1 : -1; 
+
             if (this.playerColor == ColorEnum.White)
             {
                 if (state.WhiteScore <= state.BlackScore)

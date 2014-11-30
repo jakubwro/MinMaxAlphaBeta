@@ -43,6 +43,7 @@
     <Compile Include="Gauge.cs" />
     <Compile Include="IMinMaxSearch.cs" />
     <Compile Include="Memoizer.cs" />
+    <Compile Include="MinMaxAlphaBetaWiki.cs" />
     <Compile Include="MinMaxAlphaBetaMemo.cs" />
     <Compile Include="MinMaxAlphaBeta.cs" />
     <Compile Include="Measure.cs" />
