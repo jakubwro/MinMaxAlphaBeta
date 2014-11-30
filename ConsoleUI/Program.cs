@@ -17,20 +17,20 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            //FastState fs = FastState.InitialState;
-            //var fspresenter = new FastStatePresenter();
-            //Console.WriteLine(fspresenter.Render(fs));
+            FastState fs = FastState.InitialState;
+            var fspresenter = new FastStatePresenter();
+            Console.WriteLine(fspresenter.Render(fs));
 
-            //var movs = fs.GetNextStates().ToList();
+            var movs = fs.GetNextStates().ToList();
 
-            //while (movs.Count > 0)
-            //{
-            //    fs = movs.Random();
-            //    Console.WriteLine(fspresenter.Render(fs));
-            //    movs = fs.GetNextStates().ToList();
+            while (movs.Count > 0)
+            {
+                fs = movs.Random();
+                Console.WriteLine(fspresenter.Render(fs));
+                movs = fs.GetNextStates().ToList();
 
-            //}
-            //Console.WriteLine(fspresenter.Render(fs));
+            }
+            Console.WriteLine(fspresenter.Render(fs));
 
 
             //var fastState = new FastState(2147516394 & 0x0fffffff, 3728179200 & 0xfffffff0, 0, 0, true);
@@ -42,7 +42,7 @@ namespace ConsoleUI
             //    Console.WriteLine(fspresenter.Render(m));
 
 
-            var gauge = new BinaryStateGauge(ColorEnum.White);
+            var gauge = new BinaryStateGauge(ColorEnum.Black);
             MinMaxAlphaBeta<FastState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<FastState, int>(gauge);
             var presenter = new ConsolePresenter();
 
@@ -54,7 +54,7 @@ namespace ConsoleUI
             GameState gameState = new GameState(settings, Board.Board8x8);
             try
             {
-                Game<GameState> game = new Game<GameState>(minMaxAlphaBetaPlayer, consolePlayer, presenter);
+                Game<GameState> game = new Game<GameState>(consolePlayer, minMaxAlphaBetaPlayer, presenter);
 
                 IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 

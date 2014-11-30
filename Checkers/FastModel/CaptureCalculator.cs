@@ -32,66 +32,78 @@ namespace Checkers.FastModel
             UInt32 position = captureState.Position;
             
             //1
-            captured = lr & captureState.NextRow;
-            destination = lr & captureState.NextNextRow;
-            if (IsLegalCapture(white, black, position, captured, destination))
+            if (captureState.IsWhiteActive)
             {
-                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
-                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
-                                          captureState.RowNo + 2,
-                                          captureState.ColNo + 1);
-                yield return cs;
+                captured = lr & captureState.NextRow;
+                destination = lr & captureState.NextNextRow;
+                if (IsLegalCapture(white, black, position, captured, destination))
+                {
+                    var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                              (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
+                                              captureState.RowNo + 2,
+                                              captureState.ColNo + 1);
+                    yield return cs;
 
-                foreach (var s in GetCaptures(cs))
-                    yield return s;
+                    foreach (var s in GetCaptures(cs))
+                        yield return s;
+                }
             }
 
             //2
-            captured = lr & captureState.PrevRow;
-            destination = lr & captureState.PrevPrevRow;
-            if (IsLegalCapture(white, black, position, captured, destination))
+            if (captureState.IsBlackActive)
             {
-                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
-                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
-                                          captureState.RowNo - 2,
-                                          captureState.ColNo - 1);
-                yield return cs;
+                captured = lr & captureState.PrevRow;
+                destination = lr & captureState.PrevPrevRow;
+                if (IsLegalCapture(white, black, position, captured, destination))
+                {
+                    var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                              (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
+                                              captureState.RowNo - 2,
+                                              captureState.ColNo - 1);
+                    yield return cs;
 
-                foreach (var s in GetCaptures(cs))
-                    yield return s;
+                    foreach (var s in GetCaptures(cs))
+                        yield return s;
 
+                }
             }
 
             //3
-            captured = rl & captureState.NextRow;
-            destination = rl & captureState.NextNextRow;
-            if (IsLegalCapture(white, black, position, captured, destination))
+            if (captureState.IsWhiteActive)
             {
-                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
-                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
-                                          captureState.RowNo + 2,
-                                          captureState.ColNo - 1);
+                captured = rl & captureState.NextRow;
+                destination = rl & captureState.NextNextRow;
+                if (IsLegalCapture(white, black, position, captured, destination))
+                {
+                    var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                              (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
+                                              captureState.RowNo + 2,
+                                              captureState.ColNo - 1);
 
-                yield return cs;
+                    yield return cs;
 
-                foreach (var s in GetCaptures(cs))
-                    yield return s;
+                    foreach (var s in GetCaptures(cs))
+                        yield return s;
+                }
             }
 
             //4
-            captured = rl & captureState.PrevRow;
-            destination = rl & captureState.PrevPrevRow;
-            if (IsLegalCapture(white, black, position, captured, destination))
+            if (captureState.IsBlackActive)
             {
-                var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
-                                          (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
-                                          captureState.RowNo - 2,
-                                          captureState.ColNo + 1);
+                captured = rl & captureState.PrevRow;
+                destination = rl & captureState.PrevPrevRow;
+                if (IsLegalCapture(white, black, position, captured, destination))
+                {
+                    var cs = new CaptureState((white & ~position & ~captured) | (captureState.IsWhiteActive ? destination : 0),
+                                              (black & ~position & ~captured) | (captureState.IsBlackActive ? destination : 0),
+                                              captureState.RowNo - 2,
+                                              captureState.ColNo + 1);
 
-                yield return cs;
+                    yield return cs;
 
-                foreach (var s in GetCaptures(cs))
-                    yield return s;
+                    foreach (var s in GetCaptures(cs))
+                        yield return s;
+                }
             }
 
 

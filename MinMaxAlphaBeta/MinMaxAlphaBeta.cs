@@ -14,7 +14,7 @@ namespace MinMaxAlphaBeta
     {
         Gauge<TState, TMeasure> gauge;
 
-        Dictionary<TState, Measure<TMeasure>> memo = new Dictionary<TState, Measure<TMeasure>>();
+        private long counter = 0;
 
         public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
         {
@@ -28,15 +28,19 @@ namespace MinMaxAlphaBeta
 
             var v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity);
 
-            var result = (from s in state.GetNextStates()
-                          where memo[s] == v
-                          select s).First();
+            var result = default(TState);
+
+            //var result = (from s in state.GetNextStates()
+            //              where memo[s] == v
+            //              select s).First();
 
             return result;
         }
 
         internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
         {
+            counter++;
+
             if (state.IsTerminal)
                 return gauge.Measure(state);
 
@@ -44,32 +48,22 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
-                Measure<TMeasure> memoized;
-                if (memo.TryGetValue(nextState, out memoized))
-                    v = memoized;
-                else
-                    v = Max(v, MinEvaluation(nextState, α, β));
-
-                memo[nextState] = v;
+                v = Max(v, MinEvaluation(nextState, α, β));
 
                 if (v >= β)
                 {
-                    if (memo.ContainsKey(state))
-                        Debug.Assert(memo[state] == v);
-                    memo[state] = v;
                     return v;
                 }
                 α = Max(α, v);
             }
 
-            if (memo.ContainsKey(state))
-                Debug.Assert(memo[state] == v);
-            memo[state] = v;
             return v;
         }
 
         internal Measure<TMeasure> MinEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β)
         {
+            counter++;
+
             if (state.IsTerminal)
                 return gauge.Measure(state);
 
@@ -77,26 +71,16 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
-                Measure<TMeasure> memoized;
-                if (memo.TryGetValue(nextState, out memoized))
-                    v = memoized;
-                else
-                    v = Min(v, MaxEvaluation(nextState, α, β));
+               v = Min(v, MaxEvaluation(nextState, α, β));
 
                 if (v <= α)
                 {
-                    if (memo.ContainsKey(state))
-                        Debug.Assert(memo[state] == v);
-                    memo[state] = v;
                     return v;
                 }
 
                 β = Min(β, v);
             }
 
-            if (memo.ContainsKey(state))
-                Debug.Assert(memo[state] == v);
-            memo[state] = v;
             return v;
         }
 

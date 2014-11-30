@@ -94,6 +94,8 @@ namespace Checkers.FastModel
 
             List<CaptureState> captures = new List<CaptureState>();
 
+            
+
             for(int r = 0; r < 8; ++r)
             {
                 for(int i = 0; i < 4; ++i)
