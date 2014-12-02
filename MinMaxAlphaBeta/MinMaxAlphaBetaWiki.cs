@@ -14,8 +14,10 @@ namespace MinMaxAlphaBeta
     {
         Gauge<TState, TMeasure> gauge;
 
-        private Dictionary<TState, Measure<TMeasure>> memoMax = new Dictionary<TState, Measure<TMeasure>>();
-        private Dictionary<TState, Measure<TMeasure>> memoMin = new Dictionary<TState, Measure<TMeasure>>(); 
+        private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMax = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
+        private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMin = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
+
+        private Dictionary<TState, Measure<TMeasure>> nextStatesMeasures = new Dictionary<TState, Measure<TMeasure>>();
 
         public MinMaxAlphaBetaWiki(Gauge<TState, TMeasure> gauge)
         {
@@ -27,12 +29,17 @@ namespace MinMaxAlphaBeta
             if (state.IsTerminal)
                 throw new InvalidOperationException("Cannot find next state for terminal state");
 
-            var v = AlphaBeta(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity, true);
+            var v = AlphaBeta(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity, true, 0);
 
-            var result = (from s in state.GetNextStates()
-                          where memoMax[s] == v
-                          select s).First();
+            
+            //var potentialResults = (from s in state.GetNextStates()
+            //                        where memoMax[s] == v
+            //                        select s).ToList();
 
+
+            var result = nextStatesMeasures.Where(kv => kv.Value == v).First().Key;
+            
+            nextStatesMeasures.Clear();
 
             //Statistics.hashes.Add(result.GetHashCode());
             Statistics.measures.Add(v.ToInt());
@@ -45,7 +52,7 @@ namespace MinMaxAlphaBeta
             return result;
         }
 
-        public Measure<TMeasure> AlphaBeta(TState state, Measure<TMeasure> α, Measure<TMeasure> β, bool maximizingPlayer)
+        public Measure<TMeasure> AlphaBeta(TState state, Measure<TMeasure> α, Measure<TMeasure> β, bool maximizingPlayer, int depth)
         {
             //Console.WriteLine(state.GetHashCode());
             if (state.IsTerminal)
@@ -55,17 +62,19 @@ namespace MinMaxAlphaBeta
             {
                 foreach (TState nextState in state.GetNextStates())
                 {
-                    Measure<TMeasure> memoized;
-                    if (memoMax.TryGetValue(nextState, out memoized))
+                    var tuple = Tuple.Create(nextState, α, β);
+                    Measure<TMeasure> measure;
+                    if (!memoMax.TryGetValue(tuple, out measure))
                     {
-                        α = Max(α, memoized);
+                        measure = AlphaBeta(nextState, α, β, false, depth + 1);
+                        memoMax[tuple] = measure;
                     }
-                    else
-                    {
-                        var measure = AlphaBeta(nextState, α, β, false);
-                        memoMax[nextState] = measure;
-                        α = Max(α, measure);
-                    }
+
+                    if (depth == 0)
+                        nextStatesMeasures[nextState] = measure;
+
+
+                    α = Max(α, measure);
 
                     if (β <= α)
                         break;
@@ -77,17 +86,15 @@ namespace MinMaxAlphaBeta
             {
                 foreach (TState nextState in state.GetNextStates())
                 {
-                    Measure<TMeasure> memoized;
-                    if (memoMin.TryGetValue(nextState, out memoized))
+                    var tuple = Tuple.Create(nextState, α, β);
+                    Measure<TMeasure> measure;
+                    if (!memoMin.TryGetValue(tuple, out measure))
                     {
-                        β = Min(β, memoized);
+                        measure = AlphaBeta(nextState, α, β, true, depth + 1);
+                        memoMin[tuple] = measure;
                     }
-                    else
-                    {
-                        var measure = AlphaBeta(nextState, α, β, true);
-                        memoMin[nextState] = measure;
-                        β = Min(β, measure);
-                    }
+
+                    β = Min(β, measure);
 
                     if (β <= α)
                         break;

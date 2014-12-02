@@ -10,6 +10,6 @@ namespace MinMaxAlphaBeta
     {
         public static List<int> hashes;
         public static List<int> measures;
-        public static bool clearMemo = true;
+        public static bool clearMemo = false;
     }
 }
