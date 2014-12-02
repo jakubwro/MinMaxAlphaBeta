@@ -14,8 +14,8 @@ namespace MinMaxAlphaBeta
     {
         Gauge<TState, TMeasure> gauge;
 
-        private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMax = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
-        private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMin = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
+        private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memo = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
+        //private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMin = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
 
         private Dictionary<TState, Measure<TMeasure>> nextStatesMeasures = new Dictionary<TState, Measure<TMeasure>>();
 
@@ -46,8 +46,7 @@ namespace MinMaxAlphaBeta
 
             if (Statistics.clearMemo == true)
             {
-                memoMax.Clear();
-                memoMin.Clear();
+                memo.Clear();
             }
             return result;
         }
@@ -64,10 +63,10 @@ namespace MinMaxAlphaBeta
                 {
                     var tuple = Tuple.Create(nextState, α, β);
                     Measure<TMeasure> measure;
-                    if (!memoMax.TryGetValue(tuple, out measure))
+                    if (!memo.TryGetValue(tuple, out measure))
                     {
                         measure = AlphaBeta(nextState, α, β, false, depth + 1);
-                        memoMax[tuple] = measure;
+                        memo[tuple] = measure;
                     }
 
                     if (depth == 0)
@@ -88,10 +87,10 @@ namespace MinMaxAlphaBeta
                 {
                     var tuple = Tuple.Create(nextState, α, β);
                     Measure<TMeasure> measure;
-                    if (!memoMin.TryGetValue(tuple, out measure))
+                    if (!memo.TryGetValue(tuple, out measure))
                     {
                         measure = AlphaBeta(nextState, α, β, true, depth + 1);
-                        memoMin[tuple] = measure;
+                        memo[tuple] = measure;
                     }
 
                     β = Min(β, measure);

@@ -64,7 +64,7 @@ namespace ConsoleUI
                 try
                 {
                     SequencePlayer<GameState> sp = new SequencePlayer<GameState>();
-                    Game<GameState> game = new Game<GameState>(randomPlayer, minMaxAlphaBetaPlayer2, presenter);
+                    Game<GameState> game = new Game<GameState>(minMaxAlphaBetaPlayer, randomPlayer, presenter);
 
                     IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 
@@ -77,9 +77,20 @@ namespace ConsoleUI
                     Console.WriteLine(presenter.Render(finalState));
 
                     if (player1Pts == player2Pts)
+                    {
                         Console.WriteLine("Draw.");
+                        Statistics.draws++;
+                    }
+                    else if (player1Pts > player2Pts)
+                    {
+                        Statistics.player1Wins++;
+                        Console.WriteLine("The winer is player 1");
+                    }
                     else
-                        Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2");
+                    {
+                        Statistics.player2Wins++;
+                        Console.WriteLine("The winer is player 2");
+                    }
 
                     for (int i = 0; i < Statistics.measures.Count() - 1; ++i)
                         Debug.Assert(Statistics.measures[i] <= Statistics.measures[i+1]);
