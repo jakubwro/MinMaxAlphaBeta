@@ -58,10 +58,13 @@ namespace ConsoleUI
             var settings = new GameSettings(true, true, false);
             while (true)
             {
+                Statistics.hashes = new List<int>();
+                Statistics.measures = new List<int>();
                 GameState gameState = new GameState(settings, Board.Board6x6);
                 try
                 {
-                    Game<GameState> game = new Game<GameState>(randomPlayer, minMaxAlphaBetaPlayer2 /*randomPlayer*/, presenter);
+                    SequencePlayer<GameState> sp = new SequencePlayer<GameState>();
+                    Game<GameState> game = new Game<GameState>(randomPlayer, minMaxAlphaBetaPlayer2, presenter);
 
                     IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 
@@ -77,6 +80,9 @@ namespace ConsoleUI
                         Console.WriteLine("Draw.");
                     else
                         Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2");
+
+                    for (int i = 0; i < Statistics.measures.Count() - 1; ++i)
+                        Debug.Assert(Statistics.measures[i] <= Statistics.measures[i+1]);
 
                 }
                 catch (Exception exc)

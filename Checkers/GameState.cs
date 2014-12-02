@@ -52,6 +52,7 @@ using Checkers.FastModel;
                     }
 
                 }
+                moves = moves.OrderBy(m => m.FromSquare).ThenBy(m => m.ToSquare).ToList();
                 availableMoves = moves;
                 return moves;
             }

@@ -7,21 +7,30 @@ using System.Threading.Tasks;
 
 namespace ConsoleUI
 {
-    public class RandomPlayer<TState> : IPlayer<TState>
+    public class SequencePlayer<TState> : IPlayer<TState>
         where TState : IState<TState>
     {
-        Random random = new Random(DateTime.Now.Millisecond);
+        List<int> hashes = new List<int>()
+        {
+ 471765186,
+ 713696836,
+ 115074854,
+ 35020246,
+ -1846612794,
+ 559819156,
+ 287517896,
+ 1907011142,
+        };
+
+        int stepNo = 0;
 
         public TState MakeMove(TState state)
         {
             if (state.IsTerminal)
                 throw new InvalidOperationException("Game is over");
 
-            var states = state.GetNextStates();
-            var index = random.Next(0, states.Count() - 1);
-            var next = states.ElementAt(index);
-
-            Statistics.hashes.Add(next.GetHashCode());
+            var next = state.GetNextStates().First(s => s.GetHashCode() == hashes[stepNo]);
+            stepNo++;
             return next;
         }
     }

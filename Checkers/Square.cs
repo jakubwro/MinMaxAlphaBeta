@@ -46,5 +46,25 @@ namespace Checkers
         {
             return string.Format("{0}{1}", this.column, this.row);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Square == false)
+                return false;
+
+            return this.Equals((Square)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+
+                hash = hash * 23 + this.row.GetHashCode();
+                hash = hash * 23 + this.column.GetHashCode();
+                return hash;
+            }
+        }
     }
 }

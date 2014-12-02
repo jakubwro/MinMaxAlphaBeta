@@ -41,5 +41,18 @@ namespace Checkers
                 foreach(Move move in rule.Execute(game, square))
                     yield return move;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Checker == false)
+                return false;
+
+            return this.color == ((Checker)obj).color;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.color.GetHashCode();
+        }
     }
 }

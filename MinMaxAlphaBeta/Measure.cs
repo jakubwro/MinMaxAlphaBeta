@@ -85,5 +85,10 @@ namespace MinMaxAlphaBeta
             return this.Value.GetHashCode();
         }
 
+        public int ToInt()
+        {
+            return (int)Convert.ChangeType(this.Value, typeof(int));
+        }
+
     }
 }
