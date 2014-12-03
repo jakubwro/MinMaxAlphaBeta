@@ -55,7 +55,7 @@ namespace ConsoleUI
             IPlayer<GameState> consolePlayer = new ConsolePlayer<GameState>(presenter);
 
 
-            var settings = new GameSettings(true, true, false);
+            var settings = GameSettings.Default;
             while (true)
             {
                 Statistics.hashes = new List<int>();

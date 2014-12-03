@@ -65,8 +65,13 @@ namespace MinMaxAlphaBeta
                     Measure<TMeasure> measure;
                     if (!memo.TryGetValue(tuple, out measure))
                     {
+                        Statistics.memoMiss++;
                         measure = AlphaBeta(nextState, α, β, false, depth + 1);
                         memo[tuple] = measure;
+                    }
+                    else
+                    {
+                        Statistics.memoHits++;
                     }
 
                     if (depth == 0)
@@ -89,8 +94,13 @@ namespace MinMaxAlphaBeta
                     Measure<TMeasure> measure;
                     if (!memo.TryGetValue(tuple, out measure))
                     {
+                        Statistics.memoMiss++;
                         measure = AlphaBeta(nextState, α, β, true, depth + 1);
                         memo[tuple] = measure;
+                    }
+                    else
+                    {
+                        Statistics.memoHits++;
                     }
 
                     β = Min(β, measure);
