@@ -15,7 +15,9 @@ namespace MinMaxAlphaBeta
         Gauge<TState, TMeasure> gauge;
 
         private long counter = 0;
-        private Dictionary<TState, Measure<TMeasure>> memo = new Dictionary<TState, Measure<TMeasure>>(); 
+        private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memo = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
+        private List<Tuple<TState, Measure<TMeasure>>> nextStatesMeasures = new List<Tuple<TState, Measure<TMeasure>>>();
+       // private List<List<Tuple<TState, Measure<TMeasure>>>> history = new List<List<Tuple<TState, Measure<TMeasure>>>>();
 
         public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
         {
@@ -29,13 +31,18 @@ namespace MinMaxAlphaBeta
 
             var v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity, 0);
 
-            //var result = default(TState);
+            var result = nextStatesMeasures.Where(t => t.Item2 == v).First().Item1;
 
-            var result = (from s in state.GetNextStates()
-                          where memo[s] == v
-                          select s).First();
+            //if (Statistics.Instance.measures.Any() && Statistics.Instance.measures.Last() > v.ToInt())
+            //{
+            //    Debug.Assert(Statistics.Instance.measures.Last() <= v.ToInt());
+            //}
 
-            memo.Clear();
+            //history.Add(nextStatesMeasures);
+            nextStatesMeasures  = new List<Tuple<TState, Measure<TMeasure>>>();
+            //memo.Clear();
+
+            //Statistics.Instance.measures.Add(v.ToInt());
 
             return result;
         }
@@ -44,9 +51,6 @@ namespace MinMaxAlphaBeta
         {
             counter++;
 
-            if (memo.ContainsKey(state))
-                return memo[state];
-
             if (state.IsTerminal)
                 return gauge.Measure(state);
 
@@ -54,9 +58,24 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
-                v = Max(v, MinEvaluation(nextState, α, β, depth+1));
-                memo[nextState] = v; 
+                var tuple = Tuple.Create(nextState, α, β);
+                Measure<TMeasure> measure;
+                if (!memo.TryGetValue(tuple, out measure))
+                {
+                    Statistics.Instance.memoMiss++;
+                    measure = MinEvaluation(nextState, α, β, depth + 1);
+                    memo[tuple] = measure;
+                }
+                else
+                {
+                    Statistics.Instance.memoHits++;
+                }
 
+                if (depth == 0)
+                    nextStatesMeasures.Add(Tuple.Create(nextState, measure));
+
+                v = Max(v, measure);
+                
                 if (v >= β)
                 {
                     return v;
@@ -71,9 +90,6 @@ namespace MinMaxAlphaBeta
         {
             counter++;
 
-            if (memo.ContainsKey(state))
-                return memo[state];
-
             if (state.IsTerminal)
                 return gauge.Measure(state);
 
@@ -81,8 +97,20 @@ namespace MinMaxAlphaBeta
 
             foreach (TState nextState in state.GetNextStates())
             {
-                v = Min(v, MaxEvaluation(nextState, α, β, depth + 1));
-                memo[nextState] = v; 
+                var tuple = Tuple.Create(nextState, α, β);
+                Measure<TMeasure> measure;
+                if (!memo.TryGetValue(tuple, out measure))
+                {
+                    Statistics.Instance.memoMiss++;
+                    measure = MaxEvaluation(nextState, α, β, depth + 1);
+                    memo[tuple] = measure;
+                }
+                else
+                {
+                    Statistics.Instance.memoHits++;
+                }
+
+                v = Min(v, measure);
 
                 if (v <= α)
                 {

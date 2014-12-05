@@ -42,13 +42,10 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Gauge.cs" />
     <Compile Include="IMinMaxSearch.cs" />
-    <Compile Include="Memoizer.cs" />
     <Compile Include="MinMaxAlphaBetaWiki.cs" />
-    <Compile Include="MinMaxAlphaBetaMemo.cs" />
     <Compile Include="MinMaxAlphaBeta.cs" />
     <Compile Include="Measure.cs" />
     <Compile Include="IState.cs" />
-    <Compile Include="ParallelMinMaxAlpha.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statistics.cs" />
   </ItemGroup>

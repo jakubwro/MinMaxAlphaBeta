@@ -17,40 +17,18 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            //FastState fs = FastState.InitialState;
-            //var fspresenter = new FastStatePresenter();
-            //Console.WriteLine(fspresenter.Render(fs));
+            Statistics.Instance = new Statistics();
 
-            //var movs = fs.GetNextStates().ToList();
+            var whitePlayerGauge = new GameState01Gauge(ColorEnum.White);
+            var blackPlayerGauge = new GameState01Gauge(ColorEnum.Black);
 
-            //while (movs.Count > 0)
-            //{
-            //    fs = movs.Random();
-            //    Console.WriteLine(fspresenter.Render(fs));
-            //    movs = fs.GetNextStates().ToList();
-
-            //}
-            //Console.WriteLine(fspresenter.Render(fs));
-
-
-            ///
-            ///
-            ///
-
-            var gauge = new GameStateGauge(ColorEnum.White);
-            var gauge2 = new GameStateGauge(ColorEnum.Black);
-
-            MinMaxAlphaBeta<GameState, int> minMaxAlphaBetaX = new MinMaxAlphaBeta<GameState, int>(gauge);
-
-            MinMaxAlphaBetaWiki<GameState, int> minMaxAlphaBeta = new MinMaxAlphaBetaWiki<GameState, int>(gauge);
-            MinMaxAlphaBetaWiki<GameState, int> minMaxAlphaBeta2 = new MinMaxAlphaBetaWiki<GameState, int>(gauge2);
+            MinMaxAlphaBeta<GameState, int> minMaxAlphaBetaWhite = new MinMaxAlphaBeta<GameState, int>(whitePlayerGauge);
+            MinMaxAlphaBeta<GameState, int> minMaxAlphaBetaBlack = new MinMaxAlphaBeta<GameState, int>(blackPlayerGauge);
+            
             var presenter = new ConsolePresenter();
 
-
-            IPlayer<GameState> minMaxAlphaBetaPlayerX = new MinMaxPlayer<GameState>(minMaxAlphaBetaX);
-
-            IPlayer<GameState> minMaxAlphaBetaPlayer = new MinMaxPlayer<GameState>(minMaxAlphaBeta);
-            IPlayer<GameState> minMaxAlphaBetaPlayer2 = new MinMaxPlayer<GameState>(minMaxAlphaBeta2);
+            IPlayer<GameState> minMaxAlphaBetaWhitePlayer = new MinMaxPlayer<GameState>(minMaxAlphaBetaWhite);
+            IPlayer<GameState> minMaxAlphaBetaBlackPlayer = new MinMaxPlayer<GameState>(minMaxAlphaBetaBlack);
             IPlayer<GameState> randomPlayer = new RandomPlayer<GameState>();
             IPlayer<GameState> consolePlayer = new ConsolePlayer<GameState>(presenter);
 
@@ -58,13 +36,12 @@ namespace ConsoleUI
             var settings = GameSettings.Default;
             while (true)
             {
-                Statistics.hashes = new List<int>();
-                Statistics.measures = new List<int>();
-                GameState gameState = new GameState(settings, Board.Board6x6);
+                Statistics.Instance.measures = new List<int>();
+                GameState gameState = new GameState(settings, Board.Board5x5);
                 try
                 {
                     SequencePlayer<GameState> sp = new SequencePlayer<GameState>();
-                    Game<GameState> game = new Game<GameState>(minMaxAlphaBetaPlayer, randomPlayer, presenter);
+                    Game<GameState> game = new Game<GameState>(minMaxAlphaBetaWhitePlayer, randomPlayer, presenter);
 
                     IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 
@@ -79,70 +56,28 @@ namespace ConsoleUI
                     if (player1Pts == player2Pts)
                     {
                         Console.WriteLine("Draw.");
-                        Statistics.draws++;
+                        Statistics.Instance.draws++;
                     }
                     else if (player1Pts > player2Pts)
                     {
-                        Statistics.player1Wins++;
+                        Statistics.Instance.player1Wins++;
                         Console.WriteLine("The winer is player 1");
                     }
                     else
                     {
-                        Statistics.player2Wins++;
+                        Statistics.Instance.player2Wins++;
                         Console.WriteLine("The winer is player 2");
                     }
 
-                    for (int i = 0; i < Statistics.measures.Count() - 1; ++i)
-                        Debug.Assert(Statistics.measures[i] <= Statistics.measures[i+1]);
+                    for (int i = 0; i < Statistics.Instance.measures.Count() - 1; ++i)
+                        Debug.Assert(Statistics.Instance.measures[i] <= Statistics.Instance.measures[i + 1]);
 
                 }
                 catch (Exception exc)
                 {
-
+                    Console.Error.WriteLine(exc.Message);
                 }
             }
-
-
-
-            ///
-            ///
-            ///
-
-
-            //var gauge = new BinaryStateGauge(ColorEnum.Black);
-            //MinMaxAlphaBeta<FastState, int> minMaxAlphaBeta = new MinMaxAlphaBeta<FastState, int>(gauge);
-            //var presenter = new ConsolePresenter();
-
-            //IPlayer<GameState> minMaxAlphaBetaPlayer = new FastMinMaxPlayer(minMaxAlphaBeta);
-            //IPlayer<GameState> randomPlayer = new RandomPlayer<GameState>();
-            //IPlayer<GameState> consolePlayer = new ConsolePlayer<GameState>(presenter);
-
-            //var settings = new GameSettings(true, true, false);
-            //GameState gameState = new GameState(settings, Board.Board8x8);
-            //try
-            //{
-            //    Game<GameState> game = new Game<GameState>(consolePlayer, minMaxAlphaBetaPlayer, presenter);
-
-            //    IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
-
-            //    var finalState = gameplay.Last();
-            //    Debug.Assert(true == finalState.IsTerminal);
-
-            //    int player1Pts = finalState.WhiteScore;
-            //    int player2Pts = finalState.BlackScore;
-
-            //    Console.WriteLine(presenter.Render(finalState));
-
-            //    if (player1Pts == player2Pts)
-            //        Console.WriteLine("Draw.");
-            //    else
-            //        Console.WriteLine("The winer is player {0}", player1Pts > player2Pts ? "1" : "2");
-
-            //}
-            //catch(Exception exc)
-            //{
-
-            //}
 
             Console.ReadKey();
 

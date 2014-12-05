@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleUI
 {
-    class MinMaxPlayer<TState> : IPlayer<TState>
+    public class MinMaxPlayer<TState> : IPlayer<TState>
         where TState : IState<TState>
     {
         IMinMax<TState> minMax;

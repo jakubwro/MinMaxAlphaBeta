@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleUI
+namespace Checkers
 {
-    public class GameStateGauge : Gauge<GameState, int>
+    public class GameState01Gauge : Gauge<GameState, int>
     {
         private readonly ColorEnum playerColor;
 
-        public GameStateGauge(ColorEnum playerColor)
+        public GameState01Gauge(ColorEnum playerColor)
         {
             this.playerColor = playerColor;
         }

@@ -21,7 +21,7 @@ namespace ConsoleUI
             var index = random.Next(0, states.Count() - 1);
             var next = states.ElementAt(index);
 
-            Statistics.hashes.Add(next.GetHashCode());
+            //Statistics.hashes.Add(next.GetHashCode());
             return next;
         }
     }

@@ -15,11 +15,11 @@ namespace MinMaxAlphaBeta
         Gauge<TState, TMeasure> gauge;
 
         private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memo = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
-        //private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMin = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
 
         private Dictionary<TState, Measure<TMeasure>> nextStatesMeasures = new Dictionary<TState, Measure<TMeasure>>();
 
-        public MinMaxAlphaBetaWiki(Gauge<TState, TMeasure> gauge)
+        //not usable
+        private MinMaxAlphaBetaWiki(Gauge<TState, TMeasure> gauge)
         {
             this.gauge = gauge;
         }
@@ -30,30 +30,18 @@ namespace MinMaxAlphaBeta
                 throw new InvalidOperationException("Cannot find next state for terminal state");
 
             var v = AlphaBeta(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity, true, 0);
-
-            
-            //var potentialResults = (from s in state.GetNextStates()
-            //                        where memoMax[s] == v
-            //                        select s).ToList();
-
-
             var result = nextStatesMeasures.Where(kv => kv.Value == v).First().Key;
             
             nextStatesMeasures.Clear();
 
-            //Statistics.hashes.Add(result.GetHashCode());
-            Statistics.measures.Add(v.ToInt());
+            Statistics.Instance.measures.Add(v.ToInt());
 
-            if (Statistics.clearMemo == true)
-            {
-                memo.Clear();
-            }
+
             return result;
         }
 
         public Measure<TMeasure> AlphaBeta(TState state, Measure<TMeasure> α, Measure<TMeasure> β, bool maximizingPlayer, int depth)
         {
-            //Console.WriteLine(state.GetHashCode());
             if (state.IsTerminal)
                 return gauge.Measure(state);
 
@@ -65,13 +53,13 @@ namespace MinMaxAlphaBeta
                     Measure<TMeasure> measure;
                     if (!memo.TryGetValue(tuple, out measure))
                     {
-                        Statistics.memoMiss++;
+                        Statistics.Instance.memoMiss++;
                         measure = AlphaBeta(nextState, α, β, false, depth + 1);
                         memo[tuple] = measure;
                     }
                     else
                     {
-                        Statistics.memoHits++;
+                        Statistics.Instance.memoHits++;
                     }
 
                     if (depth == 0)
@@ -94,13 +82,13 @@ namespace MinMaxAlphaBeta
                     Measure<TMeasure> measure;
                     if (!memo.TryGetValue(tuple, out measure))
                     {
-                        Statistics.memoMiss++;
+                        Statistics.Instance.memoMiss++;
                         measure = AlphaBeta(nextState, α, β, true, depth + 1);
                         memo[tuple] = measure;
                     }
                     else
                     {
-                        Statistics.memoHits++;
+                        Statistics.Instance.memoHits++;
                     }
 
                     β = Min(β, measure);

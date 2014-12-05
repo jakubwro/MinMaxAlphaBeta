@@ -54,6 +54,8 @@
     <Compile Include="Enums.cs" />
     <Compile Include="FastModel\Gauge.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="Gauges\GameState01Gauge.cs" />
+    <Compile Include="Gauges\GameStateLinearGauge.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="Rules\FolkCaptureRule.cs" />
     <Compile Include="Rules\Rule.cs" />

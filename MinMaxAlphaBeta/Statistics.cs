@@ -8,15 +8,33 @@ namespace MinMaxAlphaBeta
 {
     public class Statistics
     {
-        public static List<int> hashes;
-        public static List<int> measures;
-        public static bool clearMemo = false;
+        public static Statistics Instance = null;
 
-        public static int player1Wins = 0;
-        public static int player2Wins = 0;
-        public static int draws = 0;
+        public List<int> measures;
 
-        public static int memoHits = 0;
-        public static int memoMiss = 0;
+        public int player1Wins = 0;
+        public int player2Wins = 0;
+        public int draws = 0;
+
+        public int totalPlayer1Pts = 0;
+        public int totalPlayer2Pts = 0;
+        public int totalMoves = 0;
+
+        public int memoHits = 0;
+        public int memoMiss = 0;
+
+        public string ToString()
+        {
+            return String.Format(
+@"Player 1 wins: {0}
+Player 2 wins: {1}
+Draws: {2}
+Total player 1 pts: {3}
+Total player 2 pts: {4}
+Total moves: {5}
+Memo hits: {6}
+Momo misses: {7}
+", player1Wins, player2Wins, draws, totalPlayer1Pts, totalPlayer2Pts, totalMoves, memoHits, memoMiss);
+        }
     }
 }
