@@ -14,10 +14,8 @@ namespace MinMaxAlphaBeta
     {
         Gauge<TState, TMeasure> gauge;
 
-        private long counter = 0;
         private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memo = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
         private List<Tuple<TState, Measure<TMeasure>>> nextStatesMeasures = new List<Tuple<TState, Measure<TMeasure>>>();
-       // private List<List<Tuple<TState, Measure<TMeasure>>>> history = new List<List<Tuple<TState, Measure<TMeasure>>>>();
 
         public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
         {
@@ -32,25 +30,13 @@ namespace MinMaxAlphaBeta
             var v = MaxEvaluation(state, Measure<TMeasure>.MinusInfinity, Measure<TMeasure>.PlusInfinity, 0);
 
             var result = nextStatesMeasures.Where(t => t.Item2 == v).First().Item1;
-
-            //if (Statistics.Instance.measures.Any() && Statistics.Instance.measures.Last() > v.ToInt())
-            //{
-            //    Debug.Assert(Statistics.Instance.measures.Last() <= v.ToInt());
-            //}
-
-            //history.Add(nextStatesMeasures);
-            nextStatesMeasures  = new List<Tuple<TState, Measure<TMeasure>>>();
-            //memo.Clear();
-
-            //Statistics.Instance.measures.Add(v.ToInt());
+            nextStatesMeasures.Clear();
 
             return result;
         }
 
         internal Measure<TMeasure> MaxEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β, int depth)
         {
-            counter++;
-
             if (state.IsTerminal)
                 return gauge.Measure(state);
 
@@ -88,8 +74,6 @@ namespace MinMaxAlphaBeta
 
         internal Measure<TMeasure> MinEvaluation(TState state, Measure<TMeasure> α, Measure<TMeasure> β, int depth)
         {
-            counter++;
-
             if (state.IsTerminal)
                 return gauge.Measure(state);
 

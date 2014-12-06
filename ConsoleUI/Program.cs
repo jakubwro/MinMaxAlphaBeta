@@ -37,11 +37,11 @@ namespace ConsoleUI
             while (true)
             {
                 Statistics.Instance.measures = new List<int>();
-                GameState gameState = new GameState(settings, Board.Board5x5);
+                GameState gameState = new GameState(settings, Board.Board6x6);
                 try
                 {
                     SequencePlayer<GameState> sp = new SequencePlayer<GameState>();
-                    Game<GameState> game = new Game<GameState>(minMaxAlphaBetaWhitePlayer, randomPlayer, presenter);
+                    Game<GameState> game = new Game<GameState>(consolePlayer, minMaxAlphaBetaBlackPlayer, presenter);
 
                     IEnumerable<GameState> gameplay = game.Play(gameState).ToList();
 
