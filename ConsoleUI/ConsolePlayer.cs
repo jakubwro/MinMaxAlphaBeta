@@ -22,8 +22,7 @@ namespace ConsoleUI
             if (state.IsTerminal)
                 throw new InvalidOperationException("Game is over");
 
-            Console.Clear();
-            Console.WriteLine(presenter.Render(state));
+            //Console.WriteLine(presenter.Render(state));
 
             TState move;
             while (false == presenter.TryAccept(state, Console.ReadLine(), out move))

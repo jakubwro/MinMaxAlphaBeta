@@ -25,6 +25,9 @@ namespace ConsoleUI
         {
             TState state = initialState;
             IPlayer<TState> activePlayer = player1;
+
+            Console.WriteLine(presenter.Render(state));
+
             while (state.IsTerminal == false)
             {
                 //TODO: add loop until valid
@@ -33,14 +36,12 @@ namespace ConsoleUI
 
                 if (false == state.GetNextStates().Any(s => s.Equals(nextState)))
                     throw new InvalidOperationException("Illegal move!");
-
-                Console.WriteLine(presenter.Render(state));
-
+                
                 yield return state;
                 state = nextState;
+                Console.WriteLine(presenter.Render(state));
                 activePlayer = activePlayer == player1 ? player2 : player1;
             }
-            Console.WriteLine(presenter.Render(state));
             yield return state;
         }
     }
