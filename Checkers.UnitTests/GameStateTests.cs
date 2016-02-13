@@ -9,7 +9,6 @@ namespace CheckersTests
 {
     using Diagonal = IEnumerable<Square>;
     using Layout = IImmutableDictionary<Square, Checker>;
-    using Checkers.FastModel;
 
     [TestClass]
     public class GameStateTests
@@ -112,18 +111,6 @@ namespace CheckersTests
             Assert.IsTrue(game1.Equals(game2));
             Assert.IsTrue(game1.Equals((object)game2));
             Assert.IsTrue(game1.GetHashCode() == game2.GetHashCode());
-        }
-
-        [TestMethod]
-        public void GameState_ToFastState()
-        {
-            var game = new GameState(GameSettings.Default, Board.Board8x8);
-
-            var fs = game.ToFastState();
-
-            Assert.IsTrue(fs.WhiteFolks == FastState.InitialState.WhiteFolks);
-            Assert.IsTrue(fs.BlackFolks == FastState.InitialState.BlackFolks);
-            Assert.IsTrue(fs.ActivePlayer == FastState.InitialState.ActivePlayer);
         }
     }
 }

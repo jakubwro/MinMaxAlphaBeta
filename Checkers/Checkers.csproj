@@ -42,17 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FastModel\BinaryExtensions.cs" />
-    <Compile Include="FastModel\BinaryMasks.cs" />
-    <Compile Include="FastModel\CaptureCalculator.cs" />
-    <Compile Include="FastModel\MoveCalculator.cs" />
-    <Compile Include="FastModel\CaptureState.cs" />
     <Compile Include="GameSettings.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="BoardExtensions.cs" />
     <Compile Include="Checker.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="FastModel\Gauge.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="Rules\FolkCaptureRule.cs" />
@@ -61,7 +55,6 @@
     <Compile Include="Capture.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FastModel\FastState.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MinMaxAlphaBeta\MinMaxAlphaBeta.csproj">

@@ -49,16 +49,16 @@ namespace MinMaxAlphaBeta
 
         public int CompareTo(Measure<TMeasure> other)
         {
-            if (this is MinusInfinityMeasure && other is MinusInfinityMeasure)
+            if (object.ReferenceEquals(this, MinusInfinity) && object.ReferenceEquals(other, MinusInfinity))
                 throw new InvalidOperationException("Unable to compare two minus infinities");
 
-            if (this is PlusInfinityMeasure && other is PlusInfinityMeasure)
+            if (object.ReferenceEquals(this, PlusInfinity) && object.ReferenceEquals(other, PlusInfinity))
                 throw new InvalidOperationException("Unable to compare two infinities");
 
-            if (this is MinusInfinityMeasure || other is PlusInfinityMeasure)
+            if (object.ReferenceEquals(this, MinusInfinity) || object.ReferenceEquals(other, PlusInfinity))
                 return -1;
 
-            if (this is PlusInfinityMeasure || other is MinusInfinityMeasure)
+            if (object.ReferenceEquals(this, PlusInfinity) || object.ReferenceEquals(other, MinusInfinity))
                 return 1;
 
             return Value.CompareTo(other.Value);
@@ -71,10 +71,8 @@ namespace MinMaxAlphaBeta
 
         public override bool Equals(object obj)
         {
-            if (obj is Measure<TMeasure> == false)
-                return false;
-
-            return this.Equals((Measure<TMeasure>)obj);
+            var other = obj as Measure<TMeasure>;
+            return other != null && this.Equals(other);
         }
 
         public override int GetHashCode()

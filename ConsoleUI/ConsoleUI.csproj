@@ -45,14 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FastStatePresenter.cs" />
     <Compile Include="ConsolePresenter.cs" />
     <Compile Include="ConsolePlayer.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameStateGauge.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="IPresenter.cs" />
-    <Compile Include="FastMinMaxPlayer.cs" />
     <Compile Include="MinMaxPlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
