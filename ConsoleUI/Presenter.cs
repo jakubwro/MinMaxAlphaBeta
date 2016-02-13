@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleUI
 {
-    class ConsolePresenter : IPresenter<GameState, string>
+    class Presenter : IPresenter<GameState, string>
     {
         public string Render(GameState state)
         {

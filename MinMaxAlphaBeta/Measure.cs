@@ -88,5 +88,9 @@ namespace MinMaxAlphaBeta
             return (int)Convert.ChangeType(this.Value, typeof(int));
         }
 
+        public static implicit operator Measure<TMeasure> (TMeasure measure)
+        {
+            return Create(measure);
+        }
     }
 }

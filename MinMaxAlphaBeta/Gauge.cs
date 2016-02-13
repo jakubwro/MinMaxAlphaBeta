@@ -6,18 +6,10 @@ using System.Threading.Tasks;
 
 namespace MinMaxAlphaBeta
 {
-    public abstract class Gauge<TState, TMeasure>
+    public interface IGauge<TState, TMeasure>
         where TState : IState<TState>
         where TMeasure : IComparable<TMeasure>, IComparable, IEquatable<TMeasure>
     {
-        protected abstract TMeasure ComputeValue(TState state);
-        
-        public Measure<TMeasure> Measure(TState state)
-        {
-            if (!state.IsTerminal)
-                throw new InvalidOperationException("Cannot simply measure non terminal state");
-
-            return Measure<TMeasure>.Create(ComputeValue(state));
-        }
+        Measure<TMeasure> GetMeasure(TState state);
     }
 }

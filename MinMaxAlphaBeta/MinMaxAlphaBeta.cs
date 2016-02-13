@@ -12,12 +12,12 @@ namespace MinMaxAlphaBeta
         where TState : IState<TState>
         where TMeasure : IComparable<TMeasure>, IComparable, IEquatable<TMeasure>
     {
-        Gauge<TState, TMeasure> gauge;
+        IGauge<TState, TMeasure> gauge;
 
         private long counter = 0;
         private Dictionary<TState, Measure<TMeasure>> memo = new Dictionary<TState, Measure<TMeasure>>(); 
 
-        public MinMaxAlphaBeta(Gauge<TState, TMeasure> gauge)
+        public MinMaxAlphaBeta(IGauge<TState, TMeasure> gauge)
         {
             this.gauge = gauge;
         }
@@ -48,7 +48,7 @@ namespace MinMaxAlphaBeta
                 return memo[state];
 
             if (state.IsTerminal)
-                return gauge.Measure(state);
+                return gauge.GetMeasure(state);
 
             Measure<TMeasure> v = α;
 
@@ -75,7 +75,7 @@ namespace MinMaxAlphaBeta
                 return memo[state];
 
             if (state.IsTerminal)
-                return gauge.Measure(state);
+                return gauge.GetMeasure(state);
 
             Measure<TMeasure> v = β;
 

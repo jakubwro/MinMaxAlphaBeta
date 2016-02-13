@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleUI
 {
-    public class GameStateGauge : Gauge<GameState, int>
+    public class GameStateGauge : IGauge<GameState, int>
     {
         private readonly ColorEnum playerColor;
 
@@ -17,7 +17,7 @@ namespace ConsoleUI
             this.playerColor = playerColor;
         }
 
-        protected override int ComputeValue(GameState state)
+        public Measure<int> GetMeasure(GameState state)
         {
             if (state.WhiteScore == state.BlackScore)
                 return 0;

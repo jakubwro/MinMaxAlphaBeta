@@ -12,14 +12,14 @@ namespace MinMaxAlphaBeta
         where TState : IState<TState>
         where TMeasure : IComparable<TMeasure>, IComparable, IEquatable<TMeasure>
     {
-        Gauge<TState, TMeasure> gauge;
+        IGauge<TState, TMeasure> gauge;
 
         private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memo = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
         //private Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>> memoMin = new Dictionary<Tuple<TState, Measure<TMeasure>, Measure<TMeasure>>, Measure<TMeasure>>();
 
         private Dictionary<TState, Measure<TMeasure>> nextStatesMeasures = new Dictionary<TState, Measure<TMeasure>>();
 
-        public MinMaxAlphaBetaWiki(Gauge<TState, TMeasure> gauge)
+        public MinMaxAlphaBetaWiki(IGauge<TState, TMeasure> gauge)
         {
             this.gauge = gauge;
         }
@@ -55,7 +55,7 @@ namespace MinMaxAlphaBeta
         {
             //Console.WriteLine(state.GetHashCode());
             if (state.IsTerminal)
-                return gauge.Measure(state);
+                return gauge.GetMeasure(state);
 
             if (maximizingPlayer)
             {
