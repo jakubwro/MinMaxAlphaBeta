@@ -228,3 +228,5 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+Checkers/Gauges/GameState01Gauge.cs
+MinMaxAlphaBeta/MinMaxAlphaBetaWiki.cs
